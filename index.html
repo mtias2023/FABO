@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/src/style.css" rel="stylesheet">
-  
+
   <!-- favicon -->
-  <link rel="icon" sizes="48x48"  href="/img/icono-universo.png" type="image/png">
+  <link rel="icon" sizes="48x48" href="/img/icono-universo.png" type="image/png">
+
+  <!-- Enlace al manifest -->
+  <link rel="manifest" href="/manifest.json">
 
   <title>FABO</title>
 </head>
+
 <body>
   <div id="app"></div>
-  <script src="/src/main.js" type="module"></script> 
+  <script src="/src/main.js" type="module"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("Service Worker registrado"))
+        .catch((error) => console.error("Error registrando el Service Worker", error));
+    }
+  </script>
 </body>
+
 </html>
