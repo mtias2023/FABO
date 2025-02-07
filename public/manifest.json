@@ -3,7 +3,6 @@
   "short_name": "FABO",
   "description": "Aplicación para gestionar partidos de fútbol, básquet y tenis",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
