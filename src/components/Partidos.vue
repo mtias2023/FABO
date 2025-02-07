@@ -36,51 +36,41 @@
           <span>Mostrar solo partidos cercanos</span>
         </div>
 
-        <!-- Listado de Partidos -->
         <div v-if="partidosFiltrados.length" class="mt-6 space-y-4">
           <div v-for="partido in partidosFiltrados" :key="partido.id" class="border p-4 rounded shadow-sm">
-            <!-- Imagen del partido -->
             <div class="w-full h-80 relative rounded overflow-hidden mb-4 bg-gray-100">
-              <img :src="partido.imagen" alt="Imagen del partido" class="absolute inset-0 w-full h-full object-cover" />
+              <!-- Se muestra la imagen del partido según el deporte -->
+              <img :src="`/img/${partido.imagen}`" alt="Imagen del partido"
+                class="absolute inset-0 w-full h-full object-cover" />
             </div>
 
-            <!-- Detalles del partido -->
-            <h2 class="text-xl font-semibold mb-2">{{ partido.nombre }}</h2>
+            <h2 class="text-xl font-semibold mb-2">
+              <i v-if="partido.deporte === 'futbol'" class="fas fa-futbol mr-2"></i>
+              <i v-else-if="partido.deporte === 'basquet'" class="fas fa-basketball-ball mr-2"></i>
+              <i v-else-if="partido.deporte === 'tenis'" class="fas fa-table-tennis mr-2"></i>
+              - {{ partido.nombre }}
+            </h2>
 
-            <!-- Organizado por -->
             <p class="text-gray-600 flex items-center mb-2">
               <i class="fas fa-user-circle mr-2"></i>
               Organizado por<span class="font-medium">: {{ partido.organizadoPor }}</span>
             </p>
 
-            <!-- Fecha y hora -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-calendar-alt mr-3"></i>
               {{ formatoFechaHora(partido.fechaHora) }}
             </p>
 
-            <!-- Precio -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-dollar-sign mr-4"></i>
-              {{ partido.precio }}
+              ${{ partido.precio }}
             </p>
 
-            <!-- Deporte -->
-            <p class="text-gray-500 flex items-center mb-2">
-              <i class="fas fa-basketball-ball mr-3" v-if="partido.deporte === 'basquet'"></i>
-              <i class="fas fa-futbol mr-2" v-if="partido.deporte === 'futbol'"></i>
-              <img src="/img/pelota-de-tenis.png" alt="Pelota de Tenis" class="mr-2"
-                v-if="partido.deporte === 'tenis'" />
-              <span>{{ partido.deporte }}</span>
-            </p>
-
-            <!-- Ubicación -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-map-marker-alt mr-3"></i>
               {{ abreviarDireccion(partido.direccion) }}
             </p>
 
-            <!-- Lugares disponibles -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-users mr-1"></i>
               Lugares disponibles: {{ partido.lugaresDisponibles }}
@@ -95,20 +85,19 @@
 
             <!-- Botón para unirse al partido -->
             <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
-              class="mt-2 border border-cyan-400 text-white bg-cyan-500 rounded p-2 hover:bg-transparent hover:text-black transition px-4 py-2  mr-2">
+              class="mt-2 border border-cyan-400 text-white bg-cyan-500 rounded p-2 hover:bg-transparent hover:text-black transition px-4 py-2 mr-2">
               Unirse al partido
             </button>
-            
 
             <p class="text-cyan-400 font-semibold" v-else>No hay lugares disponibles :c</p>
           </div>
         </div>
 
-        <!-- Mensaje cuando no hay partidos -->
+         <!-- Mensaje cuando no hay partidos -->
         <p v-else class="text-gray-500 mt-6">No hay partidos disponibles.</p>
 
-        <!-- Modal de confirmación de unión -->
-        <div v-if="modalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+         <!-- Modal de confirmación de unión -->
+         <div v-if="modalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div class="bg-white p-6 rounded-lg max-w-md">
             <h2 class="text-xl font-semibold mb-4">Te has unido al partido</h2>
             <!-- Detalles del partido -->
@@ -181,8 +170,15 @@ export default {
     const cargando = ref(true); // Estado de carga
     const filtroDeporte = ref(""); // Filtro por deporte
     const filtroCercania = ref(false); // Filtro por cercanía
-    const modalVisible = ref(false); // Control de visibilidad del modal
+    const modalVisible = ref(false);
     const partidoUnido = ref(null); // Partido al que el usuario se unió
+
+    // Objeto que asocia el deporte con su imagen (en formato webp)
+    const imagenesDeportes = {
+      futbol: "futbol.webp",
+      basquet: "basquet.webp",
+      tenis: "tenis.webp"
+    };
 
     // Cargar los partidos desde Firebase
     const cargarPartidos = () => {
@@ -193,6 +189,22 @@ export default {
       });
     };
 
+    // Computed para filtrar los partidos y asignar la imagen según su deporte
+    const partidosFiltrados = computed(() => {
+      return partidos.value
+        .filter((partido) => {
+          const cumpleDeporte = filtroDeporte.value ? partido.deporte === filtroDeporte.value : true;
+          const cumpleCercania = filtroCercania.value
+            ? calcularDistancia(ubicacionUsuario.value, partido.ubicacion) <= 10
+            : true;
+          return cumpleDeporte && cumpleCercania;
+        })
+        .map((partido) => ({
+          ...partido,
+          imagen: imagenesDeportes[partido.deporte] || "default.webp"
+        }))
+        .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)); // Ordenar por fecha ascendente
+    });
 
     // Obtener la ubicación del usuario
     const obtenerUbicacionUsuario = () => {
@@ -232,20 +244,6 @@ export default {
         Swal.fire('Error', 'Ocurrió un error al intentar obtener la dirección.', 'error');
       }
     };
-
-    // Filtrar partidos por deporte y cercanía
-    const partidosFiltrados = computed(() => {
-      return partidos.value
-        .filter((partido) => {
-          const cumpleDeporte = filtroDeporte.value ? partido.deporte === filtroDeporte.value : true;
-          const cumpleCercania = filtroCercania.value
-            ? calcularDistancia(ubicacionUsuario.value, partido.ubicacion) <= 10
-            : true;
-          return cumpleDeporte && cumpleCercania;
-        })
-        .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)); // Ordenar por fecha ascendente
-    });
-
 
     // Calcular la distancia entre dos ubicaciones
     const calcularDistancia = (ubicacion1, ubicacion2) => {
@@ -309,7 +307,6 @@ export default {
       modalVisible.value = false;
       partidoUnido.value = null;
     };
-
     onMounted(() => {
       cargarPartidos();
     });
@@ -325,7 +322,6 @@ export default {
       abreviarDireccion,
       modalVisible,
       partidoUnido,
-      modalVisible,
       modalPagoVisible,
       formPago,
       abrirModalPago,
@@ -337,22 +333,20 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .fondo-limitado {
   max-width: 950px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
   padding: 2rem;
-  border-radius: 0.5rem;
   border-radius: 15px;
 }
 
 #partido {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
   border-radius: 0.5rem;
-
+  box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
 }
 
 button {
