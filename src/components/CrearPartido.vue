@@ -15,22 +15,26 @@
             type="text" placeholder="Nombre del Partido" required>
         </div>
 
+        <!-- Imagen del Partido -->
         <div>
-          <label class="block text-xl sm:text-lg font-semibold text-gray-700">Deporte</label>
-          <select v-model="partido.deporte" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-            <option value="">Seleccione un deporte</option>
+          <label for="img" class="block text-xl sm:text-lg font-semibold text-gray-700">Imagen del partido</label>
+          <input
+            class="w-full border border-gray-300 rounded-md p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer sm:p-1"
+            type="file" @change="onFileChange" id="img" required />
+          <p v-if="imgFile" class="text-gray-600 text-sm mt-2 sm:text-xs">Archivo seleccionado: {{ imgFile.name }}</p>
+        </div>
+
+        <!-- Deporte -->
+        <div>
+          <label for="deporte" class="block text-xl sm:text-lg font-semibold text-gray-700">Deporte</label>
+          <select v-model="partido.deporte"
+            class="w-full border border-gray-300 rounded-md p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-1"
+            required>
             <option value="futbol">Fútbol</option>
             <option value="basquet">Básquet</option>
             <option value="tenis">Tenis</option>
           </select>
         </div>
-
-        <div class="flex justify-center">
-         <img v-if="imagenPredeterminada" :src="`/img/${imagenPredeterminada}`" alt="Imagen del partido"
-         class="w-80 h-80 object-cover rounded-md mt-2" />
-       </div>
-
-
 
         <!-- Precio y Lugares -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -234,10 +238,6 @@ export default {
       }
     };
 
-    const imagenPredeterminada = computed(() => {
-      return partido.value.deporte ? `${partido.value.deporte}.webp` : "";
-    });
-
     const onFileChange = (e) => {
       imgFile.value = e.target.files[0];
     };
@@ -266,7 +266,7 @@ export default {
     return {
       partido,
       ubicacionTexto,
-      imagenPredeterminada,
+      imgFile,
       organizador,
       crearPartido,
       onFileChange,
