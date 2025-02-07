@@ -1,35 +1,22 @@
 {
-  "name": "FABO - Gestión de Partidos",
-  "short_name": "FABO",
-  "description": "Aplicación para gestionar partidos de fútbol, básquet y tenis",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "icons": [
-    {
-      "src": "/img/icono-universo-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/img/icono-universo-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/img/screenshot1.png",
-      "sizes": "1919x1079",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/img/screenshot2.png",
-      "sizes": "1919x1079",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ]
-}
+    "name": "FABO",
+    "short_name": "FABO",
+    "description": "Aplicación para gestionar partidos de fútbol, básquet y tenis",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+      {
+        "src": "img/icono-universo.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "img/icono-universo.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
