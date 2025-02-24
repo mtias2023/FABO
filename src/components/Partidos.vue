@@ -84,10 +84,10 @@
 
               <!-- Botón "Unirse al partido" -->
               <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
-                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-1 hover:bg-transparent hover:text-black transition text-center">
                 Unirse al partido
               </button>
-              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 transition text-center"
+              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-1 transition text-center"
                 v-else>No hay lugares disponibles</p>
             </div>
 
