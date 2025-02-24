@@ -77,7 +77,7 @@
             type="text" placeholder="Ingresa una dirección" />
           <button @click.prevent="obtenerCoordenadas"
             class="mt-2 border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition">
-            Buscar Ubicación
+            Buscar ubicación
           </button>
         </div>
         <div>
