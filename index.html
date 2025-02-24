@@ -16,15 +16,31 @@
 </head>
 
 <body>
+  <button id="pwa">Install</button>
   <div id="app"></div>
   <script src="/src/main.js" type="module"></script>
 
   <script>
+    let evento
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(() => console.log("Service Worker registrado"))
         .catch((error) => console.error("Error registrando el Service Worker", error));
     }
+    
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      evento = e
+      console.log("llegue")
+
+      const alertDiv = document.getElementById("pwa");
+
+      alertDiv.addEventListener("click", (e) => {
+        if(evento) {
+          evento.prompt();
+        }
+      })
+    })
   </script>
 </body>
 

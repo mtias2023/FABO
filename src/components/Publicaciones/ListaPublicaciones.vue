@@ -1,6 +1,7 @@
 <template>
   <div class="container mx-auto p-4 sm:p-6 md:max-w-3xl lg:max-w-5xl">
     <div class="flex flex-col lg:flex-row gap-6">
+      <InstallPrompt />
       <!-- Comunidad Section -->
       <div class="w-full lg:w-2/3 flex flex-col mx-auto">
         <div class="comunidad p-4 sm:p-6 rounded-lg shadow-lg flex-grow">
@@ -87,9 +88,10 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage"; // Importar 
 import Comentarios from '../Comentarios.vue';
 import ModalPerfil from '../ModalPerfil.vue'; // Importar el componente ModalPerfil
 import Loader from '../Loader.vue'; // Importar el componente Loader
+import InstallPrompt from '../InstallPrompt.vue';
 
 export default {
-  components: { Comentarios, ModalPerfil, Loader },
+  components: { Comentarios, ModalPerfil, Loader, InstallPrompt },
   data() {
     return {
       publicaciones: [],
