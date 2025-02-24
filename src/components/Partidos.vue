@@ -41,7 +41,7 @@
             <div class="w-full h-[35rem] relative rounded overflow-hidden mb-4 bg-gray-100">
               <!-- Se muestra la imagen del partido según el deporte -->
               <img :src="`/img/${partido.imagen}`" alt="Imagen del partido"
-                class="absolute inset-0 w-full h-full object-cover" />
+                class="absolute inset-0 w-80 h-80 object-cover" />
             </div>
 
             <h2 class="text-xl font-semibold mb-2">
