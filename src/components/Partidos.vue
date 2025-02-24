@@ -38,7 +38,7 @@
 
         <div v-if="partidosFiltrados.length" class="mt-6 space-y-4">
           <div v-for="partido in partidosFiltrados" :key="partido.id" class="border p-4 rounded shadow-sm">
-            <div class="w-full h-80 relative rounded overflow-hidden mb-4 bg-gray-100">
+            <div class="w-full h-[35rem] relative rounded overflow-hidden mb-4 bg-gray-100">
               <!-- Se muestra la imagen del partido según el deporte -->
               <img :src="`/img/${partido.imagen}`" alt="Imagen del partido"
                 class="absolute inset-0 w-full h-full object-cover" />
@@ -47,8 +47,7 @@
             <h2 class="text-xl font-semibold mb-2">
               <i v-if="partido.deporte === 'futbol'" class="fas fa-futbol mr-2"></i>
               <i v-else-if="partido.deporte === 'basquet'" class="fas fa-basketball-ball mr-2"></i>
-              <i v-else-if="partido.deporte === 'tenis'" class="fas fa-table-tennis mr-2"></i>
-              - {{ partido.nombre }}
+              <i v-else-if="partido.deporte === 'tenis'" class="fas fa-table-tennis mr-2"></i>{{ partido.nombre }}
             </h2>
 
             <p class="text-gray-600 flex items-center mb-2">
@@ -76,28 +75,30 @@
               Lugares disponibles: {{ partido.lugaresDisponibles }}
             </p>
 
-            <router-link 
-              :to="{ name: 'Jugadores', params: { id: partido.id } }" 
-              class="mt-2 border border-blue-400 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition px-2 py-2  mr-2"
-              >
-              Ver más
-            </router-link>
+            <div class="flex space-x-2">
+              <!-- Botón "Ver más" -->
+              <router-link :to="{ name: 'Jugadores', params: { id: partido.id } }"
+                class="items-center justify-center border-2 border-blue-500 text-white bg-blue-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                Ver más
+              </router-link>
 
-            <!-- Botón para unirse al partido -->
-            <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
-              class="mt-2 border border-cyan-400 text-white bg-cyan-500 rounded p-2 hover:bg-transparent hover:text-black transition px-2 py-2 mr-2">
-              Unirse al partido
-            </button>
+              <!-- Botón "Unirse al partido" -->
+              <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
+                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                Unirse al partido
+              </button>
+              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 transition text-center"
+                v-else>No hay lugares disponibles</p>
+            </div>
 
-            <p class="text-cyan-400 font-semibold" v-else>No hay lugares disponibles :c</p>
           </div>
         </div>
 
-         <!-- Mensaje cuando no hay partidos -->
+        <!-- Mensaje cuando no hay partidos -->
         <p v-else class="text-gray-500 mt-6">No hay partidos disponibles.</p>
 
-         <!-- Modal de confirmación de unión -->
-         <div v-if="modalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <!-- Modal de confirmación de unión -->
+        <div v-if="modalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div class="bg-white p-6 rounded-lg max-w-md">
             <h2 class="text-xl font-semibold mb-4">Te has unido al partido</h2>
             <!-- Detalles del partido -->
@@ -155,7 +156,8 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { getFirestore, collection, onSnapshot, updateDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import Swal from 'sweetalert2';
 import Loader from './Loader.vue';
 
@@ -268,19 +270,49 @@ export default {
 
     // Unirse a un partido
     const unirseAPartido = async (partido) => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        Swal.fire("Error", "Debes iniciar sesión para unirte a un partido.", "error");
+        return;
+      }
+
       try {
-        if (partido.lugaresDisponibles > 0) {
-          const partidoRef = doc(db, "partidos", partido.id);
-          await updateDoc(partidoRef, { lugaresDisponibles: partido.lugaresDisponibles - 1 });
-          partidoUnido.value = partido;
-          modalVisible.value = true;
-          Swal.fire('¡Éxito!', `Te has unido al ${partido.nombre}.`, 'success');
-        } else {
-          Swal.fire('Lo sentimos', 'El partido no tiene lugares disponibles.', 'warning');
+        const partidoRef = doc(db, "partidos", partido.id);
+        const partidoSnap = await getDoc(partidoRef);
+
+        if (!partidoSnap.exists()) {
+          Swal.fire("Error", "El partido ya no está disponible.", "error");
+          return;
         }
+
+        const partidoData = partidoSnap.data();
+        const jugadores = partidoData.jugadores || [];
+
+        // Verificar si el usuario ya está en la lista de jugadores
+        const usuarioYaUnido = jugadores.some(jugador => jugador.uid === user.uid);
+
+        if (usuarioYaUnido) {
+          Swal.fire("Atención", "Ya estás unido a este partido.", "info");
+          return;
+        }
+
+        // Si el usuario no está en la lista, proceder a unirlo
+        await updateDoc(partidoRef, {
+          jugadores: arrayUnion({
+            uid: user.uid,
+            nombre: user.displayName || "Usuario desconocido",
+            email: user.email,
+          }),
+          lugaresDisponibles: partidoData.lugaresDisponibles - 1
+        });
+
+        Swal.fire("Éxito", "Te has unido al partido.", "success");
+
       } catch (error) {
         console.error("Error al unirse al partido:", error);
-        Swal.fire('Error', 'Ocurrió un error al unirte al partido.', 'error');
+        Swal.fire("Error", "No se pudo unir al partido.", "error");
       }
     };
 
@@ -349,16 +381,8 @@ export default {
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
 }
 
-button {
-  cursor: pointer;
-}
-
 h1 {
   font-size: 1.6rem;
-}
-
-button:hover {
-  transform: scale(1.02);
 }
 
 /* Ajustes para dispositivos móviles */
