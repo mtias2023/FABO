@@ -7,8 +7,6 @@
         <span class="hidden md:inline ml-2">Volver</span>
       </router-link>
 
-
-
       <!-- Botón de cambio de contraseña -->
       <button @click="toggleModal"
         class="absolute top-2 right-2 w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-cyan-500 hover:text-white transition duration-300 shadow-md">
