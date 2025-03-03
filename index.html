@@ -1,17 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/src/style.css" rel="stylesheet">
-  
+
   <!-- favicon -->
-  <link rel="icon" sizes="48x48"  href="/img/icono-universo.png" type="image/png">
+  <link rel="icon" sizes="48x48" href="/img/icono-universo.png" type="image/png">
+
+  <!-- Enlace al manifest -->
+  <link rel="manifest" href="/manifest.json">
 
   <title>FABO</title>
 </head>
+
 <body>
+  <!-- Popup de instalación -->
+  <div id="pwa-popup"
+    class="fixed bottom-24 left-1/2 transform -translate-x-1/2 w-10/12 max-w-xs bg-blue-500 p-3 rounded-2xl shadow-md text-center transition-opacity duration-300 invisible opacity-0 z-50 md:left-4 md:translate-x-0 md:bottom-4">
+    <button id="close-popup" class="absolute top-1.5 right-2 text-white text-sm">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2 class="text-white text-base font-semibold mb-1">¿Queres instalar nuestra app?</h2>
+    <button id="install-btn"
+      class="mt-2 bg-white text-cyan-600 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-gray-100 transition">
+      <i class="fa-solid fa-download mr-2"></i>Instalar
+    </button>
+  </div>
+
   <div id="app"></div>
-  <script src="/src/main.js" type="module"></script> 
+  <script src="/src/main.js" type="module"></script>
+
+  <script>
+    let evento;
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("Service Worker registrado"))
+        .catch((error) => console.error("Error registrando el Service Worker", error));
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      evento = e;
+
+      // Mostrar el popup con animación
+      const popup = document.getElementById("pwa-popup");
+      popup.classList.remove("invisible", "opacity-0");
+    });
+
+    document.getElementById("install-btn").addEventListener("click", () => {
+      if (evento) {
+        evento.prompt();
+      }
+    });
+
+    document.getElementById("close-popup").addEventListener("click", () => {
+      document.getElementById("pwa-popup").classList.add("opacity-0", "invisible");
+    });
+
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA instalada");
+      document.getElementById("pwa-popup").classList.add("opacity-0", "invisible");
+    });
+  </script>
 </body>
+
 </html>

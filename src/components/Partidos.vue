@@ -3,15 +3,18 @@
     <div class="w-full max-w-3x1 mx-auto p-6 bg-white shadow-md rounded-lg" id="partido">
       <h1 class="text-2xl text-cyan-500 font-bold mb-6">Partidos disponibles</h1>
 
+      <!-- Botón para obtener ubicación en la esquina superior derecha -->
+      <button @click="obtenerUbicacionUsuario"
+        class=" border-2 border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition md:top-6 md:right-6">
+        <i class="fa-solid fa-location-dot"></i>
+        <span class="hidden md:inline ml-2">Obtener ubicación</span>
+      </button>
+
+
       <!-- Componente Loader mientras los partidos están cargando -->
       <Loader v-if="cargando" />
 
       <div v-else>
-        <!-- Botón para obtener ubicación -->
-        <button @click="obtenerUbicacionUsuario"
-          class="mb-4 border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition">
-          Obtener ubicación
-        </button>
         <!-- Mostrar ubicación del usuario -->
         <p v-if="ubicacionUsuario" class="text-gray-600 flex items-center">
           <i class="fas fa-map-marker-alt mr-2"></i>
@@ -19,88 +22,90 @@
         </p>
 
         <!-- Filtros -->
-        <div class="mt-4 space-y-4">
+        <div class="mt-4 space-y-4 bg-white p-4 rounded-lg shadow-md">
           <!-- Filtro por deporte -->
-          <label class="block text-lg font-semibold text-gray-700">Filtro por deporte:</label>
-          <select v-model="filtroDeporte"
-            class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Todos</option>
-            <option value="futbol">Fútbol</option>
-            <option value="basquet">Básquet</option>
-            <option value="tenis">Tenis</option>
-          </select>
+          <div>
+            <label class="block text-lg font-semibold text-gray-700 mb-1">Filtro por deporte:</label>
+            <select v-model="filtroDeporte"
+              class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Todos</option>
+              <option value="futbol">Fútbol</option>
+              <option value="basquet">Básquet</option>
+              <option value="tenis">Tenis</option>
+            </select>
+          </div>
 
-          <!-- Filtro por cercanía -->
-          <label class="block text-lg font-semibold text-gray-700">Filtro por cercanía:</label>
-          <input class=" mr-1" type="checkbox" v-model="filtroCercania" />
-          <span>Mostrar solo partidos cercanos</span>
+          <!-- Filtro por cercanía con toggle switch -->
+          <div class="flex items-center space-x-3">
+            <label class="text-lg text-gray-700">Mostrar solo cercanos</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" v-model="filtroCercania" class="sr-only peer">
+              <div
+                class="w-11 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-500 
+               after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border-gray-300 
+               after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5">
+              </div>
+            </label>
+          </div>
         </div>
 
-        <!-- Listado de Partidos -->
+
         <div v-if="partidosFiltrados.length" class="mt-6 space-y-4">
           <div v-for="partido in partidosFiltrados" :key="partido.id" class="border p-4 rounded shadow-sm">
-            <!-- Imagen del partido -->
-            <div class="w-full h-80 relative rounded overflow-hidden mb-4 bg-gray-100">
-              <img :src="partido.imagen" alt="Imagen del partido" class="absolute inset-0 w-full h-full object-cover" />
+            <div
+              class="w-full h-[17rem] sm:h-[10rem] md:h-[20rem] lg:h-[35rem] relative rounded overflow-hidden mb-4 bg-gray-100">
+              <!-- Se muestra la imagen del partido según el deporte -->
+              <img :src="`/img/${partido.imagen}`" alt="Imagen del partido"
+                class="absolute inset-0 w-full h-full object-cover" />
             </div>
 
-            <!-- Detalles del partido -->
-            <h2 class="text-xl font-semibold mb-2">{{ partido.nombre }}</h2>
+            <h2 class="text-xl font-semibold mb-2">
+              <i v-if="partido.deporte === 'futbol'" class="fas fa-futbol mr-2"></i>
+              <i v-else-if="partido.deporte === 'basquet'" class="fas fa-basketball-ball mr-2"></i>
+              <i v-else-if="partido.deporte === 'tenis'" class="fas fa-table-tennis mr-2"></i>{{ partido.nombre }}
+            </h2>
 
-            <!-- Organizado por -->
             <p class="text-gray-600 flex items-center mb-2">
               <i class="fas fa-user-circle mr-2"></i>
               Organizado por<span class="font-medium">: {{ partido.organizadoPor }}</span>
             </p>
 
-            <!-- Fecha y hora -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-calendar-alt mr-3"></i>
               {{ formatoFechaHora(partido.fechaHora) }}
             </p>
 
-            <!-- Precio -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-dollar-sign mr-4"></i>
-              {{ partido.precio }}
+              ${{ partido.precio }}
             </p>
 
-            <!-- Deporte -->
-            <p class="text-gray-500 flex items-center mb-2">
-              <i class="fas fa-basketball-ball mr-3" v-if="partido.deporte === 'basquet'"></i>
-              <i class="fas fa-futbol mr-2" v-if="partido.deporte === 'futbol'"></i>
-              <img src="/img/pelota-de-tenis.png" alt="Pelota de Tenis" class="mr-2"
-                v-if="partido.deporte === 'tenis'" />
-              <span>{{ partido.deporte }}</span>
-            </p>
-
-            <!-- Ubicación -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-map-marker-alt mr-3"></i>
               {{ abreviarDireccion(partido.direccion) }}
             </p>
 
-            <!-- Lugares disponibles -->
             <p class="text-gray-500 flex items-center mb-2">
               <i class="fas fa-users mr-1"></i>
               Lugares disponibles: {{ partido.lugaresDisponibles }}
             </p>
 
-            <router-link 
-              :to="{ name: 'Jugadores', params: { id: partido.id } }" 
-              class="mt-2 border border-blue-400 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition px-4 py-2  mr-2"
-              >
-              Ver más
-            </router-link>
+            <div class="flex space-x-2">
+              <!-- Botón "Ver más" -->
+              <router-link :to="{ name: 'Jugadores', params: { id: partido.id } }"
+                class="items-center justify-center border-2 border-blue-500 text-white bg-blue-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                Ver más
+              </router-link>
 
-            <!-- Botón para unirse al partido -->
-            <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
-              class="mt-2 border border-cyan-400 text-white bg-cyan-500 rounded p-2 hover:bg-transparent hover:text-black transition px-4 py-2  mr-2">
-              Unirse al partido
-            </button>
-            
+              <!-- Botón "Unirse al partido" -->
+              <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
+                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                Unirse al partido
+              </button>
+              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-1 transition text-center"
+                v-else>No hay lugares disponibles</p>
+            </div>
 
-            <p class="text-cyan-400 font-semibold" v-else>No hay lugares disponibles :c</p>
           </div>
         </div>
 
@@ -166,7 +171,8 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { getFirestore, collection, onSnapshot, updateDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import Swal from 'sweetalert2';
 import Loader from './Loader.vue';
 
@@ -181,8 +187,15 @@ export default {
     const cargando = ref(true); // Estado de carga
     const filtroDeporte = ref(""); // Filtro por deporte
     const filtroCercania = ref(false); // Filtro por cercanía
-    const modalVisible = ref(false); // Control de visibilidad del modal
+    const modalVisible = ref(false);
     const partidoUnido = ref(null); // Partido al que el usuario se unió
+
+    // Objeto que asocia el deporte con su imagen (en formato webp)
+    const imagenesDeportes = {
+      futbol: "futbol.webp",
+      basquet: "basquet.webp",
+      tenis: "tenis.webp"
+    };
 
     // Cargar los partidos desde Firebase
     const cargarPartidos = () => {
@@ -193,6 +206,22 @@ export default {
       });
     };
 
+    // Computed para filtrar los partidos y asignar la imagen según su deporte
+    const partidosFiltrados = computed(() => {
+      return partidos.value
+        .filter((partido) => {
+          const cumpleDeporte = filtroDeporte.value ? partido.deporte === filtroDeporte.value : true;
+          const cumpleCercania = filtroCercania.value
+            ? calcularDistancia(ubicacionUsuario.value, partido.ubicacion) <= 10
+            : true;
+          return cumpleDeporte && cumpleCercania;
+        })
+        .map((partido) => ({
+          ...partido,
+          imagen: imagenesDeportes[partido.deporte] || "default.webp"
+        }))
+        .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)); // Ordenar por fecha ascendente
+    });
 
     // Obtener la ubicación del usuario
     const obtenerUbicacionUsuario = () => {
@@ -233,20 +262,6 @@ export default {
       }
     };
 
-    // Filtrar partidos por deporte y cercanía
-    const partidosFiltrados = computed(() => {
-      return partidos.value
-        .filter((partido) => {
-          const cumpleDeporte = filtroDeporte.value ? partido.deporte === filtroDeporte.value : true;
-          const cumpleCercania = filtroCercania.value
-            ? calcularDistancia(ubicacionUsuario.value, partido.ubicacion) <= 10
-            : true;
-          return cumpleDeporte && cumpleCercania;
-        })
-        .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)); // Ordenar por fecha ascendente
-    });
-
-
     // Calcular la distancia entre dos ubicaciones
     const calcularDistancia = (ubicacion1, ubicacion2) => {
       if (!ubicacion1 || !ubicacion2) return Infinity;
@@ -270,19 +285,50 @@ export default {
 
     // Unirse a un partido
     const unirseAPartido = async (partido) => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        Swal.fire("Error", "Debes iniciar sesión para unirte a un partido.", "error");
+        return;
+      }
+
       try {
-        if (partido.lugaresDisponibles > 0) {
-          const partidoRef = doc(db, "partidos", partido.id);
-          await updateDoc(partidoRef, { lugaresDisponibles: partido.lugaresDisponibles - 1 });
-          partidoUnido.value = partido;
-          modalVisible.value = true;
-          Swal.fire('¡Éxito!', `Te has unido al ${partido.nombre}.`, 'success');
-        } else {
-          Swal.fire('Lo sentimos', 'El partido no tiene lugares disponibles.', 'warning');
+        const partidoRef = doc(db, "partidos", partido.id);
+        const partidoSnap = await getDoc(partidoRef);
+
+        if (!partidoSnap.exists()) {
+          Swal.fire("Error", "El partido ya no está disponible.", "error");
+          return;
         }
+
+        const partidoData = partidoSnap.data();
+        const jugadores = partidoData.jugadores || [];
+
+        // Verificar si el usuario ya está en la lista de jugadores
+        const usuarioYaUnido = jugadores.some(jugador => jugador.uid === user.uid);
+
+        if (usuarioYaUnido) {
+          Swal.fire("Atención", "Ya estás unido a este partido.", "info");
+          return;
+        }
+
+        // Si el usuario no está en la lista, proceder a unirlo con su foto de perfil
+        await updateDoc(partidoRef, {
+          jugadores: arrayUnion({
+            uid: user.uid,
+            nombre: user.displayName || "Usuario desconocido",
+            email: user.email,
+            fotoPerfil: user.photoURL, // Imagen por defecto si no tiene foto
+          }),
+          lugaresDisponibles: partidoData.lugaresDisponibles - 1
+        });
+
+        Swal.fire("Éxito", "Te has unido al partido.", "success");
+
       } catch (error) {
         console.error("Error al unirse al partido:", error);
-        Swal.fire('Error', 'Ocurrió un error al unirte al partido.', 'error');
+        Swal.fire("Error", "No se pudo unir al partido.", "error");
       }
     };
 
@@ -309,7 +355,6 @@ export default {
       modalVisible.value = false;
       partidoUnido.value = null;
     };
-
     onMounted(() => {
       cargarPartidos();
     });
@@ -325,7 +370,6 @@ export default {
       abreviarDireccion,
       modalVisible,
       partidoUnido,
-      modalVisible,
       modalPagoVisible,
       formPago,
       abrirModalPago,
@@ -337,34 +381,24 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .fondo-limitado {
   max-width: 950px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
   padding: 2rem;
-  border-radius: 0.5rem;
   border-radius: 15px;
 }
 
 #partido {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
   border-radius: 0.5rem;
-
-}
-
-button {
-  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
 }
 
 h1 {
   font-size: 1.6rem;
-}
-
-button:hover {
-  transform: scale(1.02);
 }
 
 /* Ajustes para dispositivos móviles */

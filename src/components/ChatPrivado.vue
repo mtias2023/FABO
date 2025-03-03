@@ -1,8 +1,14 @@
 <template>
   <div class="chat-privado">
+
+    <router-link to="/partidos"
+      class="absolute  bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
+      <i class="fas fa-arrow-left "></i>
+    </router-link>
     <h1 class="chat-title">
-      Chat Privado con: {{ destinatarioNombre }}
+      Chat privado con: {{ destinatarioNombre }}
     </h1>
+
 
     <!-- Mensajes de la conversación seleccionada -->
     <div v-if="conversacionActual.length" class="mensajes-conversacion">

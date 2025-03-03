@@ -19,20 +19,20 @@
 
       <div v-else>
         <!-- Contenedor de imagen de perfil y datos del usuario -->
-        <div class="flex flex-col md:flex-row items-center justify-start mb-6">
-          <div class="perfil-imagen mr-4 mb-4 md:mb-0">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+          <div class="perfil-imagen">
             <img v-if="userPhotoURL" :src="userPhotoURL" alt="Foto de perfil"
               class="rounded-full w-24 h-24 object-cover border-4 border-cyan-400 shadow-md">
-            <p v-else class="text-gray-500 text-sm">Sin foto de perfil</p>
+            <p v-else class="text-gray-500">Sin foto de perfil</p>
           </div>
-          <div>
-            <p class="text-lg sm:text-base text-gray-700">Nombre: <span class="font-semibold">{{ userName }}</span></p>
-            <p class="text-lg sm:text-base text-gray-700">Email: <span class="font-semibold">{{ userEmail }}</span></p>
+          <div class="text-center sm:text-left">
+            <p class="text-lg font-semibold text-gray-800">Nombre: <span class="font-medium">{{ userName }}</span></p>
+            <p class="text-gray-600 text-sm">Email: <span class="font-medium">{{ userEmail }}</span></p>
           </div>
         </div>
 
         <button @click="toggleEditar"
-          class="border border-cyan-400 text-white bg-cyan-500 rounded p-3 hover:bg-transparent hover:text-black transition px-4 py-2 sm:px-4 sm:py-2 sm:text-base">
+          class="border border-cyan-400 text-white bg-cyan-500 rounded p-3 hover:bg-transparent hover:text-black transition px-4 py-2 sm:px-4 sm:py-2 sm:text-base mt-2">
           <i class="fa fa-edit mr-2"></i>
           {{ mostrarFormulario ? 'Cancelar Edición' : 'Editar Perfil' }}
         </button>
@@ -175,29 +175,33 @@
         </div>
 
         <!-- Mostrar respuestas de la encuesta si ya han sido guardadas -->
-        <div class="mt-6">
-          <h2 class="text-xl sm:text-lg font-semibold text-cyan-500 mb-4">Información del perfil</h2>
-          <div v-if="encuestaGuardada"
-            class="mt-6 mb-6 p-6 border border-gray-200 rounded-lg shadow-md text-sm sm:text-base hover:shadow-xl transition">
-            <p><strong>Deporte favorito:</strong> {{ encuesta.deporte }}</p>
-            <p><strong>Nivel de juego:</strong> {{ encuesta.nivel }}</p>
-            <p><strong>Posición:</strong> {{ encuesta.posicion }}</p>
-            <p><strong>Descripción:</strong> {{ encuesta.descripcion }}</p>
-            <button @click="mostrarModal = true" class="mt-4 text-cyan-500 font-semibold hover:underline">Editar
-              respuestas</button>
+        <div class="mt-2">
+          <!-- Datos de la Encuesta -->
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Detalles del perfil</h3>
+          <div v-if="encuesta"
+            class="mt-2 bg-cyan-100 p-6 rounded-lg shadow-md border border-cyan-200">
+            <div class="grid grid-cols-2 gap-3 text-gray-700">
+              <p><span class="font-medium">Deporte favorito:</span> {{ encuesta.deporte }}</p>
+              <p><span class="font-medium">Nivel:</span> {{ encuesta.nivel }}</p>
+              <p><span class="font-medium">Posición:</span> {{ encuesta.posicion }}</p>
+            </div>
+            <p class="mt-3 italic text-gray-600">{{ encuesta.descripcion }}</p>
           </div>
+          <p v-else class="text-gray-500 mt-2 mb-4 text-center">No hay datos disponibles.</p>
+          <button @click="mostrarModal = true" class="mt-2 text-cyan-500 font-semibold hover:underline">Editar
+            respuestas</button>
         </div>
       </div>
+    </div>
 
-      <div class="mt-6">
-        <h2 class="text-xl sm:text-lg font-semibold mb-4 text-cyan-500">Mis publicaciones</h2>
-        <div v-for="publicacion in publicaciones" :key="publicacion.id"
-          class="mb-6 p-6 border border-gray-200 rounded-lg shadow-md text-sm sm:text-base hover:shadow-xl transition">
-          <h3 class="text-lg sm:text-base font-semibold">{{ publicacion.titulo }}</h3>
-          <p class="text-gray-700 text-sm sm:text-base">{{ publicacion.contenido }}</p>
-          <img v-if="publicacion.imagenUrl" :src="publicacion.imagenUrl" alt="Imagen de la publicación"
-            class="mt-2 w-full h-auto rounded-md">
-        </div>
+    <div class="mt-6">
+      <h2 class="text-xl sm:text-lg font-semibold mb-4 text-cyan-500">Mis publicaciones</h2>
+      <div v-for="publicacion in publicaciones" :key="publicacion.id"
+        class="mb-6 p-6 border border-gray-200 rounded-lg shadow-md text-sm sm:text-base hover:shadow-xl transition">
+        <h3 class="text-lg sm:text-base font-semibold">{{ publicacion.titulo }}</h3>
+        <p class="text-gray-700 text-sm sm:text-base">{{ publicacion.contenido }}</p>
+        <img v-if="publicacion.imagenUrl" :src="publicacion.imagenUrl" alt="Imagen de la publicación"
+          class="mt-2 w-full h-auto rounded-md">
       </div>
     </div>
   </div>
@@ -240,6 +244,10 @@ export default {
     };
   },
   async mounted() {
+    if (this.encuesta.deporte) {
+      this.cargarPosiciones();
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -424,40 +432,13 @@ export default {
   margin: 0 auto;
 }
 
-.perfil-imagen img {
-  display: block;
-  margin-bottom: 15px;
-}
-
-h1 {
-  font-size: 1.6rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-
-}
-
 h2 {
   font-size: 1.3rem;
   margin-bottom: 1rem;
   font-weight: bold;
-
-}
-
-button {
-  border-radius: 6px;
 }
 
 @media (max-width: 768px) {
-  .perfil-imagen {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
   h2 {
     font-size: 1.2rem;
   }
