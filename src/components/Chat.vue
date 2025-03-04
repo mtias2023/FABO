@@ -1,6 +1,6 @@
 <template>
   <div class="chat-publico h-full">
-    <h1 class="text-2xl text-cyan-500 font-bold mb-6">Chat Público</h1>
+    <h1 class="text-2xl text-cyan-500 font-bold mb-6">Chat público</h1>
 
     <Loader v-if="cargando" />
 

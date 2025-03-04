@@ -9,7 +9,6 @@
       Chat privado con: {{ destinatarioNombre }}
     </h1>
 
-
     <!-- Mensajes de la conversación seleccionada -->
     <div v-if="conversacionActual.length" class="mensajes-conversacion">
       <div v-for="mensaje in conversacionActual" :key="mensaje.id"

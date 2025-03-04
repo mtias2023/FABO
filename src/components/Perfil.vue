@@ -36,25 +36,25 @@
         </button>
 
         <div v-if="mostrarFormulario" class="mt-6 bg-gray-50 p-6 rounded-lg shadow-md">
-          <h2 class="text-x2 sm:text-lg font-semibold mb-4 text-center text-cyan-500">Editar Perfil</h2>
+          <h2 class="text-x2 sm:text-lg font-semibold mb-4 text-center text-cyan-500">Editar perfil</h2>
           <form @submit.prevent="actualizarDatos">
             <div class="mb-4">
-              <label for="nombre" class="block text-sm sm:text-base font-medium text-gray-700">Nuevo Nombre:</label>
+              <label for="nombre" class="block text-sm sm:text-base font-medium text-gray-700">Nuevo nombre:</label>
               <input v-model="newName" type="text" id="nombre"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400">
             </div>
 
             <!-- Input para la imagen de perfil -->
             <div class="mb-4">
-              <label for="foto" class="block text-sm sm:text-base font-medium text-gray-700">Nueva Foto de
-                Perfil:</label>
+              <label for="foto" class="block text-sm sm:text-base font-medium text-gray-700">Nueva foto de
+                perfil:</label>
               <input type="file" @change="onFileChange" id="foto"
                 class="mt-1 block w-full text-sm sm:text-base focus:outline-none">
             </div>
 
             <button type="submit"
               class="bg-cyan-400 text-white px-4 py-2 rounded-full hover:bg-blue-600 text-sm sm:text-base w-auto mx-auto ">
-              Guardar Cambios
+              Guardar cambios
             </button>
           </form>
         </div>
@@ -74,10 +74,10 @@
               <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <h2 class="text-lg font-semibold text-center text-cyan-500 mb-4">Cambiar Contraseña</h2>
+            <h2 class="text-lg font-semibold text-center text-cyan-500 mb-4">Cambiar contraseña</h2>
             <form @submit.prevent="cambiarContrasena">
               <div class="mb-4 relative">
-                <label for="currentPassword" class="block text-sm font-medium text-gray-700">Contraseña Actual:</label>
+                <label for="currentPassword" class="block text-sm font-medium text-gray-700">Contraseña actual:</label>
                 <input :type="mostrarPasswordActual ? 'text' : 'password'" v-model="currentPassword"
                   id="currentPassword"
                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10 focus:ring-2 focus:ring-cyan-400">
@@ -88,7 +88,7 @@
               </div>
 
               <div class="mb-4 relative">
-                <label for="newPassword" class="block text-sm font-medium text-gray-700">Nueva Contraseña:</label>
+                <label for="newPassword" class="block text-sm font-medium text-gray-700">Nueva contraseña:</label>
                 <input :type="mostrarPassword ? 'text' : 'password'" v-model="newPassword" id="newPassword"
                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10 focus:ring-2 focus:ring-cyan-400">
                 <button type="button" @click="toggleMostrarPassword"

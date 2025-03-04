@@ -13,12 +13,13 @@
         <!-- Enlaces centrados -->
         <div class="flex-1 flex justify-center space-x-6">
           <router-link v-if="isLoggedIn" to="/" :class="linkClass('/')">Comunidad</router-link>
-          <router-link v-if="isLoggedIn" to="/crear-partido" :class="linkClass('/crear-partido')">Crear
-            Partido</router-link>
+          <router-link v-if="isLoggedIn" to="/crear-partido" :class="linkClass('/crear-partido')">
+            Crear partido
+          </router-link>
           <router-link v-if="isLoggedIn" to="/partidos" :class="linkClass('/partidos')">Partidos</router-link>
         </div>
 
-        <!-- Contenedor de los iconos de perfil, mensaje y menú hamburguesa -->
+        <!-- Contenedor de los iconos de perfil, chat, notificaciones y sesión -->
         <div class="flex space-x-3 items-center">
           <!-- Icono de perfil -->
           <router-link v-if="isLoggedIn" to="/perfil"
@@ -37,14 +38,16 @@
             <router-link to="/bienvenidos" :class="linkClass('/bienvenidos')"
               class="text-black hover:text-cyan-400 cursor-pointer">Bienvenidos</router-link>
             <router-link to="/login" :class="linkClass('/login')"
-              class="text-black hover:text-cyan-400 cursor-pointer">Iniciar Sesión</router-link>
+              class="text-black hover:text-cyan-400 cursor-pointer">Iniciar sesión</router-link>
             <router-link to="/registro" :class="linkClass('/registro')"
               class="text-black hover:text-cyan-400 cursor-pointer">Registro</router-link>
           </div>
 
           <!-- Icono de salir solo si está logueado -->
           <span v-if="isLoggedIn" @click="logout"
-            class="text-black hover:text-cyan-400 cursor-pointer hover:scale-105 transition font-medium">Salir</span>
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-900 transition cursor-pointer">
+            <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+          </span>
         </div>
       </div>
     </nav>
@@ -79,7 +82,7 @@
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/login" :class="linkClass('/login')"
-              class="text-black hover:text-cyan-400 font-medium">Iniciar Sesión</router-link>
+              class="text-black hover:text-cyan-400 font-medium">Iniciar sesión</router-link>
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/registro" :class="linkClass('/registro')"
@@ -91,13 +94,13 @@
             <router-link to="/" :class="linkClass('/')">Comunidad</router-link>
           </li>
           <li v-if="isLoggedIn">
-            <router-link to="/crear-partido" :class="linkClass('/crear-partido')">Crear Partido</router-link>
+            <router-link to="/crear-partido" :class="linkClass('/crear-partido')">Crear partido</router-link>
           </li>
           <li v-if="isLoggedIn">
             <router-link to="/partidos" :class="linkClass('/partidos')">Partidos</router-link>
           </li>
           <li v-if="isLoggedIn">
-            <router-link to="/chat" :class="linkClass('/chat')">Chat Público</router-link>
+            <router-link to="/chat" :class="linkClass('/chat')">Chat público</router-link>
           </li>
           <li v-if="isLoggedIn">
             <router-link to="/perfil" :class="linkClass('/perfil')">Perfil</router-link>
@@ -110,18 +113,36 @@
 
     <!-- Barra de navegación inferior para móviles y tabletas -->
     <div v-if="isLoggedIn && mostrarBarraInferior" class="lg:hidden fixed bottom-0 w-full bg-cyan-500 shadow-lg z-10">
-      <div class="flex justify-between p-4">
+      <div class="grid grid-cols-5 items-center text-center p-2">
+
+        <!-- Inicio -->
         <router-link to="/" class="text-white flex flex-col items-center">
-          <i class="fa-solid fa-house fa-lg"></i>
-          <span class="text-xs mt-3">Inicio</span>
+          <i class="fa-solid fa-house text-2xl"></i>
+          <span class="text-sm mt-1">Inicio</span>
         </router-link>
+
+        <!-- Partidos -->
         <router-link to="/partidos" class="text-white flex flex-col items-center">
-          <i class="fa-solid fa-futbol fa-lg"></i>
-          <span class="text-xs mt-3">Partidos</span>
+          <i class="fa-solid fa-futbol text-2xl"></i>
+          <span class="text-sm mt-1">Partidos</span>
         </router-link>
+
+        <router-link to="/crear-partido" class="text-white flex flex-col items-center flex-1">
+          <div class="bg-cyan-400 text-cyan-white rounded-lg p-4 shadow-md">
+            <i class="fa-solid fa-plus text-2xl"></i>
+          </div>
+        </router-link>
+
+        <!-- Chat Público -->
+        <router-link to="/chat" class="text-white flex flex-col items-center">
+          <i class="fa-solid fa-message text-2xl"></i>
+          <span class="text-sm mt-1">Chat</span>
+        </router-link>
+
+        <!-- Perfil -->
         <router-link to="/perfil" class="text-white flex flex-col items-center">
-          <i class="fa-solid fa-user fa-lg"></i>
-          <span class="text-xs mt-3">Perfil</span>
+          <i class="fa-solid fa-user text-2xl"></i>
+          <span class="text-sm mt-1">Perfil</span>
         </router-link>
       </div>
     </div>
@@ -192,7 +213,9 @@ export default {
 
 <style scoped>
 @import "tailwindcss/tailwind.css";
-html, body {
+
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -201,8 +224,7 @@ html, body {
 
 main {
   align-content: center;
-  min-height: 78.4vh; 
+  min-height: 78.4vh;
   margin: 0;
 }
-
 </style>

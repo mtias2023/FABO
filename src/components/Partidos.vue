@@ -10,7 +10,6 @@
         <span class="hidden md:inline ml-2">Obtener ubicación</span>
       </button>
 
-
       <!-- Componente Loader mientras los partidos están cargando -->
       <Loader v-if="cargando" />
 
