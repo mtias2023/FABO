@@ -8,7 +8,7 @@
         Bienvenidos a FABO 
       </h1>
       <p class="text-gray-200 text-base lg:text-lg leading-relaxed">
-        FABO es una comunidad diseñada para los amantes del fútbol, básquet y tenis. Aquí puedes conectar con otros usuarios, formar equipos, organizar partidos. También puedes participar en eventos, descubrir partidos cercanos y compartir tus logros deportivos.
+        FABO es una comunidad diseñada para los amantes del fútbol, básquet y tenis. Aquí puedes conectar con otros usuarios, formar equipos, organizar partidos. También podes participar en eventos, descubrir partidos cercanos y compartir tus logros deportivos.
         <br>
         <br>FABO es el espacio ideal para disfrutar del deporte, ampliar tu red de contactos y vivir experiencias únicas junto a otros apasionados del deporte.
       </p>
@@ -17,7 +17,7 @@
         <router-link 
           to="/registro" 
           class="inline-block px-4 py-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-cyan-600 transition duration-300 transform hover:scale-105">
-          Únete ahora
+          Unite ahora
         </router-link>
       </div>
     </div>

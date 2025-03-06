@@ -38,7 +38,7 @@
             <router-link to="/bienvenidos" :class="linkClass('/bienvenidos')"
               class="text-black hover:text-cyan-400 cursor-pointer">Bienvenidos</router-link>
             <router-link to="/login" :class="linkClass('/login')"
-              class="text-black hover:text-cyan-400 cursor-pointer">Iniciar Sesión</router-link>
+              class="text-black hover:text-cyan-400 cursor-pointer">Iniciar sesión</router-link>
             <router-link to="/registro" :class="linkClass('/registro')"
               class="text-black hover:text-cyan-400 cursor-pointer">Registro</router-link>
           </div>
@@ -84,7 +84,7 @@
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/login" :class="linkClass('/login')"
-              class="text-black hover:text-cyan-400 font-medium">Iniciar Sesión</router-link>
+              class="text-black hover:text-cyan-400 font-medium">Iniciar sesión</router-link>
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/registro" :class="linkClass('/registro')"
@@ -102,7 +102,7 @@
             <router-link to="/partidos" :class="linkClass('/partidos')">Partidos</router-link>
           </li>
           <li v-if="isLoggedIn">
-            <router-link to="/chat" :class="linkClass('/chat')">Chat Público</router-link>
+            <router-link to="/chat" :class="linkClass('/chat')">Chat público</router-link>
           </li>
           <li v-if="isLoggedIn">
             <router-link to="/perfil" :class="linkClass('/perfil')">Perfil</router-link>

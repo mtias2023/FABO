@@ -1,8 +1,7 @@
 <template>
   <div class="fondo mx-auto py-8 relative">
-    <!-- Botón flotante en la esquina superior derecha -->
     <router-link to="/partidos"
-      class="absolute top-4 right-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
+      class="absolute top-3 left-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
       <i class="fas fa-arrow-left mr-2"></i>
       Volver
     </router-link>
@@ -39,10 +38,11 @@
         <h2 class="text-xl font-semibold mb-2">Jugadores inscritos:</h2>
         <div class="flex flex-wrap gap-2 mb-4">
           <div v-for="jugador in partido.jugadores" :key="jugador.uid || jugador.id"
-            class="flex items-center space-x-2 bg-cyan-100 px-3 py-1 rounded-full shadow-md">
-            <img v-if="jugador.fotoPerfil" :src="jugador.fotoPerfil" alt="Foto de perfil"
+            class="flex items-center space-x-2 bg-cyan-100 px-3 py-1 rounded-full shadow-md cursor-pointer"
+            @click="abrirPerfil(jugador)">
+            <img :src="jugador.fotoPerfil || '/img/user.png'" alt="Foto de perfil"
               class="w-8 h-8 rounded-full object-cover border-2 border-cyan-400">
-            <span class="text-cyan-700 text-sm font-semibold">{{ jugador.nombre }}</span>
+            <span class="text-cyan-700 text-sm font-semibold hover:underline">{{ jugador.nombre }}</span>
           </div>
         </div>
 
@@ -90,11 +90,13 @@
           </button>
         </div>
         <p v-else class="text-green-500 font-semibold">¡Te has unido al partido!</p>
+
+        <!-- Modal de perfil -->
+        <PerfilModal :jugador="jugadorSeleccionado" :mostrar="mostrarPerfil" @cerrar="cerrarPerfil" />
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import { ref, onMounted, computed } from 'vue';
@@ -102,9 +104,10 @@ import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/fires
 import { getAuth } from 'firebase/auth';
 import Swal from 'sweetalert2';
 import Loader from './Loader.vue';
+import PerfilModal from './ModalPerfilPartidos.vue';
 
 export default {
-  components: { Loader },
+  components: { Loader, PerfilModal },
   props: ['id'],
   setup(props) {
     const db = getFirestore();
@@ -113,6 +116,8 @@ export default {
     const aceptadas = ref(false);
     const yaInscrito = ref(false);
     const mostrarBases = ref(false);
+    const jugadorSeleccionado = ref(null);
+    const mostrarPerfil = ref(false);
 
     const iconoDeporte = computed(() => {
       if (!partido.value?.deporte) return '';
@@ -124,16 +129,25 @@ export default {
       return iconos[partido.value.deporte.toLowerCase()] || 'fas fa-question-circle';
     });
 
+    const abrirPerfil = (jugador) => {
+      jugadorSeleccionado.value = {
+        ...jugador,
+        fotoPerfil: jugador.fotoPerfil || '/img/user.png' // Asegurar que siempre haya una imagen
+      };
+      mostrarPerfil.value = true;
+    };
+    
+    const cerrarPerfil = () => {
+      jugadorSeleccionado.value = null;
+      mostrarPerfil.value = false;
+    };
+
     const cargarPartido = async () => {
       try {
         const partidoDoc = await getDoc(doc(db, 'partidos', props.id));
         if (partidoDoc.exists()) {
           partido.value = partidoDoc.data();
-
-          // Simulación del usuario (esto debe reemplazarse con los datos reales del usuario autenticado)
           const usuario = { id: 'id-usuario' };
-
-          // Verificar si el usuario ya está en la lista de jugadores
           yaInscrito.value = partido.value.jugadores.some(jugador => jugador.id === usuario.id);
         } else {
           console.error('Partido no encontrado');
@@ -184,13 +198,16 @@ export default {
             return;
           }
 
+          // Obtener la URL de la foto de perfil o una por defecto
+          const photoURL = user.photoURL && user.photoURL.startsWith('http') ? user.photoURL : '/img/user.png';
+
           // Actualizar el documento en Firestore
           await updateDoc(partidoRef, {
             jugadores: arrayUnion({
               uid: user.uid,
               nombre: user.displayName || 'Usuario desconocido',
               email: user.email,
-              photoURL: user.photoURL || ''
+              fotoPerfil: photoURL, // ✅ Se guarda correctamente la foto de perfil
             }),
             lugaresDisponibles: datosPartido.lugaresDisponibles - 1
           });
@@ -203,7 +220,7 @@ export default {
             uid: user.uid,
             nombre: user.displayName || 'Usuario desconocido',
             email: user.email,
-            photoURL: user.photoURL || ''
+            fotoPerfil: photoURL, // ✅ Se mantiene el mismo nombre para consistencia
           });
           datosPartido.lugaresDisponibles -= 1;
           partido.value = { ...datosPartido };
@@ -228,7 +245,7 @@ export default {
 
     onMounted(cargarPartido);
 
-    return { partido, cargando, formatoFechaHora, aceptadas, unirseAlPartido, mostrarBases, iconoDeporte };
+    return { partido, cargando, formatoFechaHora, aceptadas, unirseAlPartido, mostrarBases, iconoDeporte, jugadorSeleccionado, mostrarPerfil, abrirPerfil, cerrarPerfil };
   },
 };
 </script>

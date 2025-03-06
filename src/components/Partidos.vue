@@ -1,17 +1,20 @@
 <template>
   <div class="fondo-limitado mx-auto py-8">
-    <div class="w-full max-w-3x1 mx-auto p-6 bg-white shadow-md rounded-lg" id="partido">
+    <div class="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg relative" id="partido">
       <h1 class="text-2xl text-cyan-500 font-bold mb-6">Partidos disponibles</h1>
+
+      <!-- Botón para obtener ubicación en la esquina superior derecha -->
+      <button @click="obtenerUbicacionUsuario"
+        class="absolute top-[-15px] right-[-20px] border-2 border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition md:top-6 md:right-6">
+        <i class="fa-solid fa-location-dot"></i>
+        <span class="hidden md:inline ml-2">Obtener ubicación</span>
+      </button>
+
 
       <!-- Componente Loader mientras los partidos están cargando -->
       <Loader v-if="cargando" />
 
       <div v-else>
-        <!-- Botón para obtener ubicación -->
-        <button @click="obtenerUbicacionUsuario"
-          class="mb-4 border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition">
-          Obtener ubicación
-        </button>
         <!-- Mostrar ubicación del usuario -->
         <p v-if="ubicacionUsuario" class="text-gray-600 flex items-center">
           <i class="fas fa-map-marker-alt mr-2"></i>
@@ -19,29 +22,41 @@
         </p>
 
         <!-- Filtros -->
-        <div class="mt-4 space-y-4">
+        <div class="mt-4 space-y-4 bg-white p-4 rounded-lg shadow-md">
           <!-- Filtro por deporte -->
-          <label class="block text-lg font-semibold text-gray-700">Filtro por deporte:</label>
-          <select v-model="filtroDeporte"
-            class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Todos</option>
-            <option value="futbol">Fútbol</option>
-            <option value="basquet">Básquet</option>
-            <option value="tenis">Tenis</option>
-          </select>
+          <div>
+            <label class="block text-lg font-semibold text-gray-700 mb-1">Filtro por deporte:</label>
+            <select v-model="filtroDeporte"
+              class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Todos</option>
+              <option value="futbol">Fútbol</option>
+              <option value="basquet">Básquet</option>
+              <option value="tenis">Tenis</option>
+            </select>
+          </div>
 
-          <!-- Filtro por cercanía -->
-          <label class="block text-lg font-semibold text-gray-700">Filtro por cercanía:</label>
-          <input class=" mr-1" type="checkbox" v-model="filtroCercania" />
-          <span>Mostrar solo partidos cercanos</span>
+          <!-- Filtro por cercanía con toggle switch -->
+          <div class="flex items-center space-x-3">
+            <label class="text-lg text-gray-700">Mostrar solo cercanos</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" v-model="filtroCercania" class="sr-only peer">
+              <div
+                class="w-11 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-500 
+               after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border-gray-300 
+               after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5">
+              </div>
+            </label>
+          </div>
         </div>
+
 
         <div v-if="partidosFiltrados.length" class="mt-6 space-y-4">
           <div v-for="partido in partidosFiltrados" :key="partido.id" class="border p-4 rounded shadow-sm">
-            <div class="w-full h-[35rem] relative rounded overflow-hidden mb-4 bg-gray-100">
+            <div
+              class="w-full h-[17rem] sm:h-[10rem] md:h-[20rem] lg:h-[35rem] relative rounded overflow-hidden mb-4 bg-gray-100">
               <!-- Se muestra la imagen del partido según el deporte -->
               <img :src="`/img/${partido.imagen}`" alt="Imagen del partido"
-                class="absolute inset-0 w-80 h-80 object-cover" />
+                class="absolute inset-0 w-full h-full object-cover" />
             </div>
 
             <h2 class="text-xl font-semibold mb-2">
@@ -298,12 +313,13 @@ export default {
           return;
         }
 
-        // Si el usuario no está en la lista, proceder a unirlo
+        // Si el usuario no está en la lista, proceder a unirlo con su foto de perfil
         await updateDoc(partidoRef, {
           jugadores: arrayUnion({
             uid: user.uid,
             nombre: user.displayName || "Usuario desconocido",
             email: user.email,
+            fotoPerfil: user.photoURL, // Imagen por defecto si no tiene foto
           }),
           lugaresDisponibles: partidoData.lugaresDisponibles - 1
         });

@@ -3,7 +3,7 @@
     class="login-container flex flex-col lg:flex-row items-center justify-center p-6 bg-white shadow-lg rounded-lg mx-auto max-w-4xl mt-10">
     <!-- Formulario de login -->
     <div class="login-form w-full lg:w-1/2 p-6">
-      <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+      <h2 class="text-2xl font-bold mb-6 text-center">Iniciar sesión</h2>
       <form @submit.prevent="login" class="space-y-4">
         <!-- Loader -->
         <div v-if="cargando" class="flex justify-center items-center">
@@ -40,8 +40,8 @@
       </form>
 
       <p class="mt-4 text-center">
-        ¿No tienes una cuenta?
-        <router-link to="/registro" class="text-blue-500 font-semibold">Regístrate aquí</router-link>
+        ¿No tenes una cuenta?
+        <router-link to="/registro" class="text-blue-500 font-semibold">Regístrate aca</router-link>
       </p>
       <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
     </div>

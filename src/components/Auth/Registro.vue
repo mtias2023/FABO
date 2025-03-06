@@ -42,8 +42,8 @@
           </button>
         </form>
         <p class="mt-4 text-center">
-          ¿Ya tienes una cuenta?
-          <router-link to="/login" class="text-blue-500 font-semibold">Inicia sesión aquí</router-link>
+          ¿Ya tenes una cuenta?
+          <router-link to="/login" class="text-blue-500 font-semibold">Inicia sesión aca</router-link>
         </p>
       </div>
     </div>
