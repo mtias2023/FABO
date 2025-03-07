@@ -2,8 +2,8 @@
   <div class="fondo mx-auto py-8 relative">
     <router-link to="/partidos"
       class="absolute top-3 left-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
-      <i class="fas fa-arrow-left mr-2"></i>
-      Volver
+      <i class="fas fa-arrow-left md:mr-2"></i>
+      <span class="hidden md:inline ml-2">Volver</span>
     </router-link>
 
     <div class="jugadores p-6 bg-white rounded-lg shadow-lg">

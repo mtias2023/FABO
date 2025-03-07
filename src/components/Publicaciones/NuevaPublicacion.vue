@@ -1,7 +1,15 @@
 <template>
-  <div class="container mx-auto p-6">
-    <h2 class="text-2xl text-cyan-500 font-bold mb-6">Crear nueva publicación</h2>
+  <div class="container mx-auto p-6 relative">
+    <!-- Botón Volver en la esquina superior izquierda -->
+    <button @click="cancelarCreacion"
+      class="absolute top-10 left-1 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
+      <i class="fas fa-arrow-left md:mr-2"></i>
+      <span class="hidden md:inline ml-2">Volver</span>
+    </button>
+    <h2 class="text-2xl text-cyan-500 font-bold mb-6 text-center">Crear nueva publicación</h2>
+
     <form @submit.prevent="crearPublicacion" class="bg-gray-100 p-8 rounded-lg shadow-lg">
+
       <!-- Campo de título -->
       <div class="mb-6 relative">
         <label for="titulo" class="absolute left-3 text-gray-500 text-sm transition-all duration-300 transform"
@@ -25,26 +33,35 @@
 
       <!-- Campo de imagen -->
       <div class="mb-6">
-        <label for="imagen" class="block text-gray-700 font-semibold mb-2">Imagen:</label>
-        <input type="file" @change="procesarImagen" accept="image/*"
-          class="border-b-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full p-3 transition-all duration-300" />
-      </div>
+        <label class="block text-gray-700 font-semibold mb-2">Imagen:</label>
 
-      <!-- Botones de acción -->
-      <div class="flex justify-center space-x-4 mt-6 flex-wrap">
+        <div class="relative w-full">
+          <input type="file" @change="procesarImagen" accept="image/*" id="fileInput" ref="fileInput" class="hidden" />
+
+          <label for="fileInput"
+            class="flex items-center justify-center w-full bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-300">
+            <span v-if="!fileName" class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Subir imagen
+            </span>
+            <span v-else>{{ fileName }}</span>
+          </label>
+        </div>
+      </div>
+      <!-- Botón Crear publicación -->
+      <div class="flex justify-start mt-6">
         <button type="submit"
-          class="bg-blue-500 text-white font-semibold rounded-lg px-6 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300">
+          class="bg-cyan-500 text-white font-semibold rounded-lg px-6 py-2 hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-all duration-300">
           Crear publicación
-        </button>
-        <button @click="cancelarCreacion"
-          class="bg-gray-500 text-white font-semibold rounded-lg px-6 py-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-300"
-          type="button">
-          Cancelar
         </button>
       </div>
     </form>
   </div>
 </template>
+
 
 <script>
 import { getFirestore, collection, addDoc } from "firebase/firestore";
@@ -58,12 +75,20 @@ export default {
       titulo: "",
       contenido: "",
       imagen: null, // Variable para almacenar la imagen seleccionada
+      fileName: "", // Nombre del archivo subido
     };
   },
   methods: {
     // Método para procesar la imagen seleccionada
     procesarImagen(event) {
-      this.imagen = event.target.files[0]; // Guarda la imagen seleccionada
+      const file = event.target.files[0];
+      if (file) {
+        this.imagen = file; // Guarda la imagen seleccionada
+        this.fileName = file.name; // Guarda el nombre del archivo
+      } else {
+        this.imagen = null;
+        this.fileName = "";
+      }
     },
 
     async crearPublicacion() {
@@ -100,6 +125,7 @@ export default {
           this.titulo = "";
           this.contenido = "";
           this.imagen = null;
+          this.fileName = ""; // Restablecer el nombre del archivo
 
           Swal.fire({
             icon: 'success',
