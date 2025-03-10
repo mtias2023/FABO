@@ -255,7 +255,7 @@ export default {
         await addDoc(collection(db, "notificaciones"), {
           usuarioId,
           nombreUsuario,
-          mensaje: `Te uniste a "${nombre}".`,
+          mensaje: `Te uniste a "${nombre}". Recorda pagar la inscripcion el dia del encuentro`,
           timestamp: serverTimestamp(),
           leido,
         });
