@@ -101,8 +101,8 @@
                 class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
                 Unirse al partido
               </button>
-              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-1 transition text-center"
-                v-else>No hay lugares disponibles</p>
+              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 transition text-center"
+                v-else>No hay mas lugares</p>
             </div>
 
           </div>
@@ -170,7 +170,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { getFirestore, collection, onSnapshot, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Swal from 'sweetalert2';
 import Loader from './Loader.vue';
@@ -286,6 +286,10 @@ export default {
     const unirseAPartido = async (partido) => {
       const auth = getAuth();
       const user = auth.currentUser;
+      const usuarioId = user.uid;
+      const nombreUsuario = user.displayName;
+      const nombre = partido.nombre || "Partido sin nombre"
+      const leido = true
 
       if (!user) {
         Swal.fire("Error", "Debes iniciar sesión para unirte a un partido.", "error");
@@ -311,6 +315,9 @@ export default {
           Swal.fire("Atención", "Ya estás unido a este partido.", "info");
           return;
         }
+        
+        // Guardar notificación en Firestore
+        await guardarNotificacion(usuarioId, nombre, nombreUsuario, leido);
 
         // Si el usuario no está en la lista, proceder a unirlo con su foto de perfil
         await updateDoc(partidoRef, {
@@ -328,6 +335,20 @@ export default {
       } catch (error) {
         console.error("Error al unirse al partido:", error);
         Swal.fire("Error", "No se pudo unir al partido.", "error");
+      }
+    };
+    const guardarNotificacion = async (usuarioId, nombre, nombreUsuario, leido) => {
+      try {
+        await addDoc(collection(db, "notificaciones"), {
+          usuarioId,
+          nombreUsuario,
+          mensaje: `Te uniste a "${nombre}".`,
+          timestamp: serverTimestamp(),
+          leido,
+        });
+        console.log("Notificación guardada en Firestore.");
+      } catch (error) {
+        console.error("Error al guardar la notificación:", error);
       }
     };
 

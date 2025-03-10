@@ -100,7 +100,7 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, collection, doc, addDoc, serverTimestamp, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import Swal from 'sweetalert2';
 import Loader from './Loader.vue';
@@ -136,7 +136,7 @@ export default {
       };
       mostrarPerfil.value = true;
     };
-    
+
     const cerrarPerfil = () => {
       jugadorSeleccionado.value = null;
       mostrarPerfil.value = false;
@@ -169,6 +169,11 @@ export default {
 
       const auth = getAuth();
       const user = auth.currentUser;
+      const usuarioId = user.uid;
+      const nombreUsuario = user.displayName;
+      const nombre = partido.value?.nombre || "Partido sin nombre";
+
+      const leido = true
 
       if (!user) {
         Swal.fire("Error", "Debes iniciar sesión para unirte a un partido.", "error");
@@ -200,6 +205,9 @@ export default {
 
           // Obtener la URL de la foto de perfil o una por defecto
           const photoURL = user.photoURL && user.photoURL.startsWith('http') ? user.photoURL : '/img/user.png';
+
+          // Guardar notificación en Firestore
+          await guardarNotificacion(usuarioId, nombre, nombreUsuario, leido);
 
           // Actualizar el documento en Firestore
           await updateDoc(partidoRef, {
@@ -240,6 +248,20 @@ export default {
           title: 'Error al unirse',
           text: 'Hubo un error al intentar unirte al partido. Intenta nuevamente.',
         });
+      }
+    };
+    const guardarNotificacion = async (usuarioId, nombre, nombreUsuario, leido) => {
+      try {
+        await addDoc(collection(db, "notificaciones"), {
+          usuarioId,
+          nombreUsuario,
+          mensaje: `Te uniste a "${nombre}".`,
+          timestamp: serverTimestamp(),
+          leido,
+        });
+        console.log("Notificación guardada en Firestore.");
+      } catch (error) {
+        console.error("Error al guardar la notificación:", error);
       }
     };
 
