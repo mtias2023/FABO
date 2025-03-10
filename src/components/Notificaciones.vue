@@ -26,7 +26,7 @@
       </li>
     </ul>
 
-    <p v-else class="text-gray-500 text-center">No tienes notificaciones.</p>
+    <p v-else class="text-gray-500 text-center">No tenes notificaciones.</p>
   </div>
 </template>
 
