@@ -1,44 +1,54 @@
 <template>
-  <div class="chat-privado">
+  <div class="relative p-4 bg-gray-100 rounded-lg shadow-md w-full sm:w-3/4 md:w-2/3 lg:w-1/2 mx-auto h-full">
 
-    <router-link to="/partidos"
-      class="absolute  bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
-      <i class="fas fa-arrow-left "></i>
+    <!-- Botón Volver -->
+    <router-link to="/"
+      class="absolute top-1 left-1 bg-blue-500 text-white font-semibold py-2 px-3 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
+      <i class="fas fa-arrow-left"></i>
+      <span class="hidden md:inline ml-2">Volver</span>
     </router-link>
-    <h1 class="chat-title">
-      Chat privado con: {{ destinatarioNombre }}
+
+    <!-- Título del chat -->
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center mb-4">
+      Chat Privado con: {{ destinatarioNombre }}
     </h1>
 
-    <!-- Mensajes de la conversación seleccionada -->
-    <div v-if="conversacionActual.length" class="mensajes-conversacion">
-      <div v-for="mensaje in conversacionActual" :key="mensaje.id"
-        :class="['mensaje', mensaje.usuario === usuarioActualId ? 'mensaje-propio' : 'mensaje-otro']">
-        <!-- Foto de perfil -->
-        <div v-if="mensaje.usuario !== usuarioActualId" class="mensaje-header">
-          <img v-if="mensaje.fotoPerfil" :src="mensaje.fotoPerfil" alt="Foto de perfil" class="rounded-full w-14
-            h-14 object-cover border-4 border-cyan-600" />
-          <strong class="ml-3">{{ mensaje.usuarioNombre }}</strong>
-        </div>
+    <!-- Mensajes -->
+    <div v-if="conversacionActual.length" class="overflow-y-auto bg-white p-4 rounded-lg max-h-[500px]">
+      <div v-for="mensaje in conversacionActual" :key="mensaje.id" :class="['mb-6 p-4 rounded-lg max-w-[60%] shadow-md flex items-start',
+        mensaje.usuario === usuarioActualId ? 'bg-red-50 ml-auto text-right flex-row-reverse'
+          : 'bg-gray-50 mr-auto text-left']">
 
-        <p class="mensaje-contenido">
-          {{ mensaje.texto }}
-        </p>
-        <span class="mensaje-fecha">{{ formatFecha(mensaje.timestamp) }}</span>
+        <!-- Imagen de perfil -->
+        <img v-if="mensaje.fotoPerfil" :src="mensaje.fotoPerfil" alt="Foto de perfil"
+          class="rounded-full w-14 h-14 object-cover border-4 border-cyan-600" />
+
+        <!-- Contenido del mensaje -->
+        <div class="mx-3 flex flex-col">
+          <strong class="text-sm font-semibold mb-1">{{ mensaje.usuarioNombre }}</strong>
+          <p class="text-base">{{ mensaje.texto }}</p>
+          <span class="text-sm text-gray-600 mt-2">{{ formatFecha(mensaje.timestamp) }}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Input para enviar mensajes -->
-    <div v-if="destinatarioId" class="input-container">
-      <input v-model="mensajePrivadoTexto" placeholder="Escribe un mensaje" class="input-message" />
-      <button @click="enviarMensajePrivado" class="btn-enviar">Enviar</button>
+    <!-- Campo de entrada con evento Enter -->
+    <div v-if="destinatarioId" class="flex mt-4">
+      <input v-model="mensajePrivadoTexto" placeholder="Escribe un mensaje"
+        class="p-3 border border-gray-300 rounded-lg flex-1 mr-2 text-base" @keyup.enter="enviarMensajePrivado" />
+      <button @click="enviarMensajePrivado"
+        class="py-2 px-4 text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition">
+        Enviar
+      </button>
     </div>
 
-    <!-- Mensaje de bienvenida si no hay conversaciones -->
-    <div v-if="!conversacionActual.length && !destinatarioId" class="no-conversacion">
-      <p>Seleccione un usuario para iniciar una conversación.</p>
+    <!-- Mensaje si no hay conversación -->
+    <div v-if="!conversacionActual.length && !destinatarioId" class="mt-4 text-center">
+      <p class="text-gray-700">Seleccione un usuario para iniciar una conversación.</p>
     </div>
   </div>
 </template>
+
 
 <script>
 import { getFirestore, collection, addDoc, onSnapshot } from 'firebase/firestore';
@@ -86,14 +96,24 @@ export default {
             (mensaje) =>
               (mensaje.usuario === this.usuarioActualId && mensaje.destinatario === this.destinatarioId) ||
               (mensaje.destinatario === this.usuarioActualId && mensaje.usuario === this.destinatarioId)
-          );
+          )
+          .sort((a, b) => a.timestamp - b.timestamp); // Ordenar del más antiguo al más nuevo
 
+        // Obtener el nombre del destinatario si no está definido
         const otroUsuario = this.conversacionActual.find(
           (mensaje) => mensaje.usuario !== this.usuarioActualId
         );
         if (otroUsuario) {
           this.destinatarioNombre = otroUsuario.usuarioNombre;
         }
+
+        // Desplazar scroll hacia el último mensaje
+        this.$nextTick(() => {
+          const chatBox = document.querySelector('.overflow-y-auto');
+          if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }
+        });
       });
     },
     async enviarMensajePrivado() {
@@ -104,6 +124,7 @@ export default {
       const usuario = auth.currentUser;
 
       try {
+        // Guardar el mensaje en la colección chatPrivado
         await addDoc(collection(db, 'chatPrivado'), {
           usuario: usuario.uid,
           destinatario: this.destinatarioId,
@@ -112,9 +133,19 @@ export default {
           fotoPerfil: this.fotoPerfilUsuarioActual,
           timestamp: Date.now(),
         });
+
+        // Guardar la notificación en la colección notificaciones
+        await addDoc(collection(db, 'notificaciones'), {
+          usuarioId: this.destinatarioId, // Usuario que recibirá la notificación
+          remitenteId: usuario.uid, // Usuario que envía el mensaje
+          mensaje: `Nuevo mensaje de ${usuario.displayName || 'Anónimo'}`,
+          timestamp: Date.now(),
+          leido: false
+        });
+
         this.mensajePrivadoTexto = '';
       } catch (error) {
-        console.error('Error al enviar el mensaje privado:', error);
+        console.error('Error al enviar el mensaje privado o la notificación:', error);
       }
     },
     formatFecha(timestamp) {
@@ -124,151 +155,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.mensaje-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.chat-privado {
-  padding: 1rem;
-  background-color: #f7fafc;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
-  border-radius: 0.5rem;
-  max-width: 800px;
-  margin: 0 auto;
-  height: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.chat-title {
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
-  color: #333;
-  text-align: center;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  letter-spacing: 0.05em;
-}
-
-.mensajes-conversacion {
-  margin: 1rem 0;
-  max-height: 500px;
-  overflow-y: auto;
-  background-color: #ffffff;
-  padding: 1rem;
-  border-radius: 12px;
-}
-
-.mensaje {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border-radius: 12px;
-  max-width: 80%;
-  position: relative;
-  word-wrap: break-word;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.mensaje-propio {
-  background-color: #FFF5F5;
-  align-self: flex-end;
-  margin-left: auto;
-  text-align: right;
-  color: rgb(10, 10, 10);
-}
-
-.mensaje-otro {
-  background-color: #fafafa;
-  align-self: flex-start;
-  margin-right: auto;
-  text-align: left;
-  color: #333;
-}
-
-.mensaje-contenido {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.mensaje-fecha {
-  font-size: 0.8rem;
-  color: #777;
-  margin-top: 0.5rem;
-  display: block;
-}
-
-.input-container {
-  display: flex;
-  margin-top: 1rem;
-}
-
-.input-message {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  margin-right: 0.5rem;
-  font-size: 1rem;
-}
-
-.btn-enviar {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  background-color: #0076fc;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-enviar:hover {
-  background-color: #05c9eb;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .chat-title {
-    font-size: 1.3rem;
-  }
-
-  .mensaje {
-    padding: 0.75rem;
-  }
-
-  .mensaje-fecha {
-    font-size: 0.7rem;
-  }
-
-  .input-message {
-    padding: 0.6rem;
-  }
-
-  .btn-enviar {
-    padding: 0.6rem 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .chat-title {
-    font-size: 1.2rem;
-  }
-
-  .mensaje {
-    padding: 0.6rem;
-  }
-
-  .input-message {
-    padding: 0.5rem;
-  }
-
-  .btn-enviar {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-}
-</style>

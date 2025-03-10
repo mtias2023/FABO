@@ -11,9 +11,10 @@ const EditarPublicacion = () => import('../components/Publicaciones/EditarPublic
 const Perfil = () => import('../components/Perfil.vue');
 const ChatPrivado = () => import('../components/ChatPrivado.vue');
 const CrearPartido = () => import('../components/CrearPartido.vue');
-const Partidos = () => import('../components/Partidos.vue'); 
-const Chat = () => import('../components/Chat.vue'); 
-const Jugadores = () => import('../components/Jugadores.vue'); 
+const Partidos = () => import('../components/Partidos.vue');
+const Chat = () => import('../components/Chat.vue');
+const Jugadores = () => import('../components/Jugadores.vue');
+const Notificaciones = () => import('../components/Notificaciones.vue');
 const NotFound = () => import('../components/NotFound.vue');
 
 const routes = [
@@ -26,14 +27,15 @@ const routes = [
   { path: '/perfil', component: Perfil, name: 'Perfil' },
   { path: '/chat-privado/:destinatarioId/:destinatarioNombre?', component: ChatPrivado, name: 'ChatPrivado' },
   { path: '/crear-partido', component: CrearPartido, name: 'CrearPartido' },
+  { path: '/notificaciones', component: Notificaciones, name: 'Notificaciones' },
   { path: '/partidos', component: Partidos, name: 'Partidos' },
-  { 
-    path: '/partido/:id/jugadores', 
-    component: Jugadores, 
+  {
+    path: '/partido/:id/jugadores',
+    component: Jugadores,
     name: 'Jugadores',
     props: (route) => ({ id: route.params.id }),
-  },
-  { path: '/chat', component: Chat, name: 'Chat' }, 
+  }, 
+  { path: '/chat', component: Chat, name: 'Chat' },
   { path: '/:pathMatch(.*)*', component: NotFound, name: 'NotFound' },
 ];
 

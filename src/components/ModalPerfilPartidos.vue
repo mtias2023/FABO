@@ -25,8 +25,7 @@
 
             <!-- Detalles de la encuesta -->
             <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Detalles del perfil</h3>
-            <div v-if="encuesta"
-                class="bg-cyan-100 p-4 rounded-lg shadow-md mb-4 border border-cyan-200">
+            <div v-if="encuesta" class="bg-cyan-100 p-4 rounded-lg shadow-md mb-4 border border-cyan-200">
                 <div class="grid grid-cols-2 gap-3 text-gray-700">
                     <p><span class="font-medium">Deporte favorito:</span> {{ encuesta.deporte }}</p>
                     <p><span class="font-medium">Nivel:</span> {{ encuesta.nivel }}</p>
@@ -66,10 +65,15 @@ export default {
         },
         async obtenerDatosEncuesta() {
             if (!this.jugador || !this.jugador.uid) return;
+
+            // Restablecer la encuesta antes de cargar los nuevos datos
+            this.encuesta = null;
+
             try {
                 const db = getFirestore();
                 const encuestaRef = doc(db, "encuestas", this.jugador.uid);
                 const encuestaSnap = await getDoc(encuestaRef);
+
                 if (encuestaSnap.exists()) {
                     this.encuesta = encuestaSnap.data();
                 }

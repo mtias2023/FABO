@@ -1,21 +1,16 @@
 <template>
   <div class="comentarios mt-4">
     <h1 class="text-lg sm:text-base font-semibold">Comentarios</h1>
-    <form @submit.prevent="agregarComentario" class="space-y-2 mb-4">
-      <input 
-        type="text" 
-        v-model="nuevoComentario" 
-        placeholder="Escribe un comentario..." 
-        class="border rounded p-2 w-full text-sm sm:text-base" 
-        required 
-      />
-      <button 
-        type="submit"
-        class="border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition text-sm sm:text-base"
-      >
-        Agregar comentario
+    <form @submit.prevent="agregarComentario" class="flex items-center gap-2 mb-4">
+      <input type="text" v-model="nuevoComentario" placeholder="Escribe un comentario..."
+        class="border rounded p-2 flex-grow text-sm sm:text-base" required />
+      <button type="submit"
+        class="border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition text-sm sm:text-base flex items-center justify-center">
+        <span class="hidden sm:inline">Agregar comentario</span>
+        <i class="fas fa-paper-plane md:ml-2"></i>
       </button>
     </form>
+
     <ul>
       <li v-for="(comentario, index) in comentarios" :key="comentario.id" class="p-2 border-b last:border-0">
         <div class="flex justify-between">
@@ -23,21 +18,12 @@
             <strong class="text-sm sm:text-base">{{ comentario.username }}</strong>:
             <span v-if="!comentario.editando">{{ comentario.texto }}</span>
             <div v-else>
-              <input 
-                type="text" 
-                v-model="comentario.textoEditado" 
-                class="border rounded p-2 w-full text-sm sm:text-base" 
-              />
-              <button 
-                @click="guardarEdicion(comentario)" 
-                class="text-green-500 text-xs sm:text-sm mt-2 mr-3"
-              >
+              <input type="text" v-model="comentario.textoEditado"
+                class="border rounded p-2 w-full text-sm sm:text-base" />
+              <button @click="guardarEdicion(comentario)" class="text-green-500 text-xs sm:text-sm mt-2 mr-3">
                 Guardar
               </button>
-              <button 
-                @click="cancelarEdicion(comentario)" 
-                class="text-gray-500 text-xs sm:text-sm mt-2"
-              >
+              <button @click="cancelarEdicion(comentario)" class="text-gray-500 text-xs sm:text-sm mt-2">
                 Cancelar
               </button>
             </div>
@@ -47,16 +33,10 @@
           {{ comentario.fechaHora }}
         </div>
         <div v-if="comentario.userId === auth.currentUser?.uid" class="flex space-x-2 mt-1">
-          <button 
-            @click="iniciarEdicion(comentario)" 
-            class="text-amber-500 text-xs sm:text-sm"
-          >
+          <button @click="iniciarEdicion(comentario)" class="text-amber-500 text-xs sm:text-sm">
             Editar
           </button>
-          <button 
-            @click="eliminarComentario(comentario.id)" 
-            class="text-red-500 text-xs sm:text-sm"
-          >
+          <button @click="eliminarComentario(comentario.id)" class="text-red-500 text-xs sm:text-sm">
             Eliminar
           </button>
         </div>

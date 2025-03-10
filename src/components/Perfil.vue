@@ -176,8 +176,7 @@
         <div class="mt-2">
           <!-- Datos de la Encuesta -->
           <h3 class="text-lg font-semibold text-gray-700 mb-2">Detalles del perfil</h3>
-          <div v-if="encuesta"
-            class="mt-2 bg-cyan-100 p-6 rounded-lg shadow-md border border-cyan-200">
+          <div v-if="encuesta" class="mt-2 bg-cyan-100 p-6 rounded-lg shadow-md border border-cyan-200">
             <div class="grid grid-cols-2 gap-3 text-gray-700">
               <p><span class="font-medium">Deporte favorito:</span> {{ encuesta.deporte }}</p>
               <p><span class="font-medium">Nivel:</span> {{ encuesta.nivel }}</p>
@@ -348,29 +347,31 @@ export default {
     async guardarEncuesta() {
       const auth = getAuth();
       const user = auth.currentUser;
+
+      if (!user) {
+        Swal.fire("Error", "Debes estar autenticado para guardar la encuesta", "error");
+        return;
+      }
+
       const db = getFirestore();
-      const encuestaRef = doc(db, "encuestas", user.uid);
+      const encuestaRef = doc(db, "encuestas", user.uid); // Guardamos la encuesta con el UID como clave
 
       try {
-        await setDoc(encuestaRef, this.encuesta);
+        await setDoc(encuestaRef, {
+          deporte: this.encuesta.deporte,
+          nivel: this.encuesta.nivel,
+          posicion: this.encuesta.posicion,
+          descripcion: this.encuesta.descripcion,
+          userId: user.uid, // Guardamos el ID del usuario
+        });
+
         this.encuestaGuardada = true;
-        this.perfilCompleto = true; // Oculta el botón después de guardar
         this.mostrarModal = false;
 
-        Swal.fire({
-          title: '¡Perfil completado!',
-          text: 'Gracias por completar tu perfil.',
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          timer: 3000
-        });
+        Swal.fire("¡Guardado!", "Tu encuesta ha sido guardada correctamente.", "success");
       } catch (error) {
-        Swal.fire({
-          title: 'Error',
-          text: `No se pudo guardar la encuesta: ${error.message}`,
-          icon: 'error',
-          confirmButtonText: 'Intentar de nuevo'
-        });
+        console.error("Error al guardar la encuesta:", error);
+        Swal.fire("Error", "No se pudo guardar la encuesta. Inténtalo de nuevo.", "error");
       }
     },
     // Cambiar contraseña
@@ -407,8 +408,6 @@ export default {
   }
 };
 </script>
-
-
 
 <style scoped>
 .fondo-perfil {

@@ -13,26 +13,46 @@
         <!-- Enlaces centrados -->
         <div class="flex-1 flex justify-center space-x-6">
           <router-link v-if="isLoggedIn" to="/" :class="linkClass('/')">Comunidad</router-link>
-          <router-link v-if="isLoggedIn" to="/crear-partido" :class="linkClass('/crear-partido')">
-            Crear partido
-          </router-link>
+          <router-link v-if="isLoggedIn" to="/crear-partido" :class="linkClass('/crear-partido')">Crear
+            partido</router-link>
           <router-link v-if="isLoggedIn" to="/partidos" :class="linkClass('/partidos')">Partidos</router-link>
         </div>
 
-        <!-- Contenedor de los iconos de perfil, chat, notificaciones y sesión -->
+        <!-- Iconos de perfil, chat y notificaciones -->
         <div class="flex space-x-3 items-center">
-          <!-- Icono de perfil -->
+          <!-- Notificaciones -->
+          <div v-if="isLoggedIn" class="relative">
+            <button @click="toggleNotificaciones"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition-transform transform hover:scale-110">
+              <i class="fa-solid fa-bell fa-lg"></i>
+            </button>
+
+            <!-- Modal de Notificaciones con animación -->
+            <transition name="fade">
+              <div v-if="mostrarNotificaciones"
+                class="absolute right-0 mt-2 w-80 bg-white border rounded-lg shadow-lg z-50">
+                <Notificaciones @cerrar="mostrarNotificaciones = false" />
+              </div>
+            </transition>
+          </div>
+
+          <!-- Perfil -->
           <router-link v-if="isLoggedIn" to="/perfil"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition">
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition-transform transform hover:scale-110">
             <i class="fa-solid fa-user fa-lg"></i>
           </router-link>
 
-          <!-- Icono de chat público -->
+          <!-- Chat Público -->
           <router-link v-if="isLoggedIn" to="/chat"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition">
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition-transform transform hover:scale-110">
             <i class="fa-solid fa-message fa-lg"></i>
           </router-link>
 
+          <!-- Cerrar sesión -->
+          <span v-if="isLoggedIn" @click="logout"
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-900 transition-transform transform hover:scale-110 cursor-pointer">
+            <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+          </span>
           <!-- Sesiones de bienvenida y login solo si no está logueado -->
           <div v-if="!isLoggedIn" class="flex space-x-3">
             <router-link to="/bienvenidos" :class="linkClass('/bienvenidos')"
@@ -42,13 +62,8 @@
             <router-link to="/registro" :class="linkClass('/registro')"
               class="text-black hover:text-cyan-400 cursor-pointer">Registro</router-link>
           </div>
-
-          <!-- Icono de salir solo si está logueado -->
-          <span v-if="isLoggedIn" @click="logout"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-900 transition cursor-pointer">
-            <i class="fa-solid fa-right-from-bracket fa-lg"></i>
-          </span>
         </div>
+
       </div>
     </nav>
 
@@ -163,6 +178,7 @@
 
 <script>
 import { getAuth, signOut } from "firebase/auth";
+import Notificaciones from "@/components/Notificaciones.vue"; // Asegúrate de importar el componente
 
 export default {
   data() {
@@ -171,8 +187,10 @@ export default {
       userEmail: "",
       menuAbierto: false,
       mostrarBarraInferior: true,
+      mostrarNotificaciones: false,
     };
   },
+  components: { Notificaciones },
   computed: {
     linkClass() {
       return (route) => {
@@ -201,6 +219,9 @@ export default {
     });
   },
   methods: {
+    toggleNotificaciones() {
+      this.mostrarNotificaciones = !this.mostrarNotificaciones;
+    },
     async logout() {
       const auth = getAuth();
       await signOut(auth);
@@ -213,6 +234,17 @@ export default {
 
 <style scoped>
 @import "tailwindcss/tailwind.css";
+
+/* Animaciones para el modal de notificaciones */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 
 html,
 body {
