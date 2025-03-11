@@ -26,9 +26,9 @@
         </div>
 
         <div class="flex justify-center">
-         <img v-if="imagenPredeterminada" :src="`/img/${imagenPredeterminada}`" alt="Imagen del partido"
-         class="w-80 h-80 object-cover rounded-md mt-2" />
-       </div>
+          <img v-if="imagenPredeterminada" :src="`/img/${imagenPredeterminada}`" alt="Imagen del partido"
+            class="w-80 h-80 object-cover rounded-md mt-2" />
+        </div>
 
         <!-- Precio y Lugares -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -68,20 +68,24 @@
 
         <!-- Ubicación -->
         <div>
-          <label for="ubicacionTexto" class="block text-xl sm:text-lg font-semibold text-gray-700">Buscar
-            dirección</label>
-          <input v-model="ubicacionTexto" id="ubicacionTexto"
-            class="w-full border border-gray-300 rounded-md p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-1"
-            type="text" placeholder="Ingresa una dirección" />
-          <button @click.prevent="obtenerCoordenadas"
-            class="mt-2 border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition">
-            <i class="fa-solid fa-location-dot"></i>
-            Buscar ubicación
-          </button>
+          <label for="ubicacionTexto" class="block text-xl sm:text-lg font-semibold text-gray-700">
+            Buscar dirección
+          </label>
+          <div class="flex items-center gap-2">
+            <input v-model="ubicacionTexto" id="ubicacionTexto"
+              class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:p-1 h-10 flex-grow"
+              type="text" placeholder="Ingresa una dirección" />
+            <button @click.prevent="obtenerCoordenadas"
+              class="border border-blue-500 text-white bg-blue-500 rounded p-2 h-10 flex items-center justify-center whitespace-nowrap hover:bg-transparent hover:text-black transition">
+              <i class="fa-solid fa-location-dot md:mr-1"></i>
+              <span class="hidden sm:inline">Buscar ubicación</span>
+            </button>
+          </div>
+
         </div>
-        <div>
+        <div class="z-0">
           <label class="block text-xl sm:text-lg font-semibold text-gray-700">Selecciona la ubicación</label>
-          <div id="map" style="height: 300px; width: 100%; border-radius: 8px;" class="mt-2"></div>
+          <div id="map" style="height: 300px; width: 100%; border-radius: 8px;" class="mt-2 z-40"></div>
           <p class="text-gray-500 text-sm mt-2 sm:text-xs">Ubicación seleccionada: {{ partido.ubicacion.lat }}, {{
             partido.ubicacion.lng }}</p>
         </div>

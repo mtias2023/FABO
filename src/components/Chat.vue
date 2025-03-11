@@ -7,13 +7,15 @@
     <div v-else class="mensajes-conversacion">
       <div v-for="mensaje in mensajesPublicos" :key="mensaje.id"
         :class="['mensaje', mensaje.userId === user.uid ? 'mensaje-propio' : 'mensaje-otro']">
-        <div class="flex items-center mb-2 space-x-4">
-          <img v-if="mensaje.fotoPerfil" :src="mensaje.fotoPerfil" alt="Foto de perfil"
-            class="rounded-full w-16 h-16 border-4 object-cover border-cyan-500"
+
+        <div class="contenido-mensaje">
+          <img v-if="mensaje.fotoPerfil" :src="mensaje.fotoPerfil" alt="Foto de perfil" class="foto-perfil"
             @error="mensaje.fotoPerfil = '/img/user.png'" />
-          <p class="mensaje-contenido">
-            <strong>{{ mensaje.usuario }}:</strong> {{ mensaje.texto }}
-          </p>
+
+          <div class="mensaje-texto">
+            <strong>{{ mensaje.usuario }}:</strong>
+            <p>{{ mensaje.texto }}</p>
+          </div>
         </div>
         <div class="mensaje-footer">
           <span class="mensaje-fecha">{{ formatTimestamp(mensaje.timestamp).date }}</span>
@@ -135,45 +137,81 @@ h1 {
   background-color: #ffffff;
   padding: 1rem;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mensaje-texto p {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .mensaje {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
+  width: 55%;
+  padding: 12px;
   border-radius: 12px;
-  max-width: 80%;
-  position: relative;
-  word-wrap: break-word;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.mensaje-propio {
-  background-color: #FFF5F5;
-  align-self: flex-end;
-  margin-left: auto;
-  text-align: right;
-  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 .mensaje-otro {
-  background-color: #fafafa;
+  background-color: #ffffff;
   align-self: flex-start;
-  margin-right: auto;
-  text-align: left;
-  color: #333;
+}
+
+/* Mensajes propios */
+.mensaje-propio {
+  background-color: #ffeeee;
+  /* Color rosado */
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* Contenido del mensaje */
+.contenido-mensaje {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mensaje-propio .contenido-mensaje {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.foto-perfil {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #00bcd4;
+  object-fit: cover;
+}
+
+.mensaje .flex {
+  align-items: center;
+  gap: 10px;
+}
+
+.mensaje-propio .flex {
+  flex-direction: row-reverse;
+  /* Invertir orden en mensajes propios */
+  text-align: right;
 }
 
 .mensaje-contenido {
-  margin: 0;
-  font-size: 1rem;
-  color: #333;
+  flex: 1;
+  word-break: break-word;
 }
 
 .mensaje-footer {
-  font-size: 0.8rem;
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
 }
 
 .mensaje-fecha {
