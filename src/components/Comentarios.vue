@@ -1,11 +1,11 @@
 <template>
-  <div class="comentarios mt-4">
+  <div class="comentarios">
     <h1 class="text-lg sm:text-base font-semibold">Comentarios</h1>
-    <form @submit.prevent="agregarComentario" class="flex items-center gap-2 mb-4">
+    <form @submit.prevent="agregarComentario" class="flex items-center gap-2">
       <input type="text" v-model="nuevoComentario" placeholder="Escribe un comentario..."
-        class="border rounded p-2 flex-grow text-sm sm:text-base" required />
+        class="border rounded p-2 text-sm sm:text-base w-3/4 sm:w-full flex-grow" required />
       <button type="submit"
-        class="border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition text-sm sm:text-base flex items-center justify-center">
+        class="border border-blue-500 text-white bg-blue-500 rounded p-2 hover:bg-transparent hover:text-black transition text-sm sm:text-base flex items-center justify-center whitespace-nowrap">
         <span class="hidden sm:inline">Agregar comentario</span>
         <i class="fas fa-paper-plane md:ml-2"></i>
       </button>
@@ -179,7 +179,7 @@ export default {
 .comentarios {
   background-color: #f9fafb;
   border-radius: 8px;
-  padding: 16px;
+  padding: 8px;
 }
 
 button {
