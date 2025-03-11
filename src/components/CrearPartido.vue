@@ -287,7 +287,7 @@ export default {
   max-width: 950px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.5rem;
   border-radius: 12px;
 }

@@ -2,8 +2,8 @@
   <div class="fondo mx-auto py-8 relative">
     <router-link to="/partidos"
       class="absolute top-3 left-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
-      <i class="fas fa-arrow-left mr-2"></i>
-      Volver
+      <i class="fas fa-arrow-left md:mr-2"></i>
+      <span class="hidden md:inline ml-2">Volver</span>
     </router-link>
 
     <div class="jugadores p-6 bg-white rounded-lg shadow-lg">
@@ -23,22 +23,22 @@
         </p>
         <p class="text-gray-600 mb-4">
           <i class="fas fa-calendar-alt mr-2"></i>
-          Fecha y hora: {{ formatoFechaHora(partido.fechaHora) }}
+          {{ formatoFechaHora(partido.fechaHora) }}
         </p>
         <p class="text-gray-600 mb-4">
           <i class="fas fa-map-marker-alt mr-2"></i>
-          Ubicación: {{ partido.direccion }}
+          {{ partido.direccion }}
         </p>
 
         <p v-if="partido.descripcion" class="text-gray-600 mb-4">
           <i class="fas fa-info-circle mr-2"></i>
-          Descripción: {{ partido.descripcion }}
+           {{ partido.descripcion }}
         </p>
 
         <h2 class="text-xl font-semibold mb-2">Jugadores inscritos:</h2>
         <div class="flex flex-wrap gap-2 mb-4">
           <div v-for="jugador in partido.jugadores" :key="jugador.uid || jugador.id"
-            class="flex items-center space-x-2 bg-cyan-100 px-3 py-1 rounded-full shadow-md cursor-pointer"
+            class="flex items-center space-x-2 bg-cyan-100 px-2 py-1 rounded-full shadow-md cursor-pointer"
             @click="abrirPerfil(jugador)">
             <img :src="jugador.fotoPerfil || '/img/user.png'" alt="Foto de perfil"
               class="w-8 h-8 rounded-full object-cover border-2 border-cyan-400">
@@ -51,7 +51,7 @@
           <div class="bg-white p-4 rounded-lg shadow-md text-gray-700">
             <div class="flex items-center mb-2">
               <i class="fas fa-file-contract text-blue-500 text-lg mr-2"></i>
-              <strong class="text-lg">Bases y Condiciones</strong>
+              <strong class="text-lg">Bases y condiciones</strong>
             </div>
 
             <p class="text-blue-500 cursor-pointer font-medium hover:underline transition"
@@ -65,6 +65,7 @@
                   <li>Estar disponible en la fecha y hora del partido.</li>
                   <li>Respetar a todos los jugadores y al organizador del partido.</li>
                   <li>Confirmar tu asistencia con antelación para una mejor organización.</li>
+                  <li>Comprometerse a pagar el dia del encuentro.</li>
                 </ul>
               </div>
             </transition>
@@ -238,7 +239,7 @@ export default {
           Swal.fire({
             icon: 'success',
             title: '¡Te has unido al partido!',
-            text: 'Ahora eres parte de este evento.',
+            text: 'Ahora eres parte de este evento. Recorda pagar la inscripcion el dia del encuentro.',
           });
         }
       } catch (error) {
@@ -255,7 +256,7 @@ export default {
         await addDoc(collection(db, "notificaciones"), {
           usuarioId,
           nombreUsuario,
-          mensaje: `Te uniste a "${nombre}". Recorda pagar la inscripcion el dia del encuentro`,
+          mensaje: `Te uniste a "${nombre}". Recorda pagar la inscripcion el dia del encuentro.`,
           timestamp: serverTimestamp(),
           leido,
         });
@@ -277,7 +278,7 @@ export default {
   max-width: 800px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 14px;
 }
 

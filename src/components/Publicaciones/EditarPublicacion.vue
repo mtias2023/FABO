@@ -1,7 +1,15 @@
 <template>
+  <!-- Botón Volver en la esquina superior izquierda -->
+
   <div class="container mx-auto p-6">
+    <router-link to="/"
+      class="absolute  bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition flex items-center">
+      <i class="fas fa-arrow-left md:mr-2"></i>
+      <span class="hidden md:inline ml-2">Volver</span>
+    </router-link>
     <h2 class="text-2xl text-cyan-500 font-bold mb-6">Editar publicación</h2>
-    <form @submit.prevent="actualizarPublicacion" class="bg-gray-100 p-8 rounded-lg shadow-lg">
+    <form @submit.prevent="actualizarPublicacion" class="bg-gray-100 md:p-8 p-4 rounded-lg shadow-lg">
+
       <!-- Campo de título -->
       <div class="mb-6 relative">
         <label for="titulo" class="absolute left-3 text-gray-500 text-sm transition-all duration-300 transform"
@@ -29,10 +37,6 @@
           class="bg-blue-500 text-white font-semibold rounded-lg px-6 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300">
           Actualizar
         </button>
-        <router-link to="/"
-          class="bg-gray-500 text-white font-semibold rounded-lg px-6 py-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-300">
-          Cancelar
-        </router-link>
       </div>
     </form>
   </div>
@@ -106,6 +110,7 @@ export default {
 h2 {
   font-size: 1.6rem;
   margin-bottom: 1rem;
+  text-align: center;
   font-weight: bold;
 }
 
@@ -145,7 +150,6 @@ button:hover,
 @media (max-width: 768px) {
   h2 {
     font-size: 1.5rem;
-    text-align: center;
   }
 
   input,

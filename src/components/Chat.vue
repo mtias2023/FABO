@@ -112,7 +112,7 @@ export default {
 
 <style scoped>
 .chat-publico {
-  padding: 1rem;
+  padding: 1.5rem;
   background-color: #f7fafc;
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
@@ -258,6 +258,7 @@ h1 {
   }
 
   .mensaje {
+    width: 85%;
     padding: 0.75rem;
   }
 

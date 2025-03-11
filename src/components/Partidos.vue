@@ -92,16 +92,16 @@
             <div class="flex space-x-2">
               <!-- Botón "Ver más" -->
               <router-link :to="{ name: 'Jugadores', params: { id: partido.id } }"
-                class="items-center justify-center border-2 border-blue-500 text-white bg-blue-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                class="items-center justify-center border-2 border-blue-500 text-white bg-blue-500 rounded px-2 py-2 hover:bg-transparent hover:text-black transition text-center">
                 Ver más
               </router-link>
 
               <!-- Botón "Unirse al partido" -->
               <button v-if="partido.lugaresDisponibles >= 1" @click="unirseAPartido(partido)"
-                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 hover:bg-transparent hover:text-black transition text-center">
+                class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-2 py-2 hover:bg-transparent hover:text-black transition text-center">
                 Unirse al partido
               </button>
-              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-1 py-2 transition text-center"
+              <p class="items-center justify-center border-2 border-cyan-500 text-white bg-cyan-500 rounded px-2 py-2 transition text-center"
                 v-else>No hay mas lugares</p>
             </div>
 
@@ -120,47 +120,6 @@
             <p class="text-gray-500 mb-1">Organizado por: {{ partidoUnido.organizadoPor }}</p>
             <p class="text-gray-500 mb-1">Fecha y hora: {{ formatoFechaHora(partidoUnido.fechaHora) }}</p>
             <p class="text-gray-500 mb-1">Precio: ${{ partidoUnido.precio }}</p>
-
-            <!-- Botones -->
-            <div class="mt-4">
-              <button @click="abrirModalPago" class="bg-blue-500 text-white rounded p-2 mr-2">Pagar ahora</button>
-              <button @click="cerrarModal" class="bg-gray-500 text-white rounded p-2">Cerrar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal de pago -->
-        <div v-if="modalPagoVisible" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div class="bg-white p-6 rounded-lg max-w-md">
-            <h2 class="text-xl font-semibold mb-4">Formulario de Pago</h2>
-            <form @submit.prevent="procesarPago">
-              <div class="mb-4">
-                <label class="block text-gray-700">Nombre del titular:</label>
-                <input type="text" v-model="formPago.nombreTitular" required
-                  class="w-full border border-gray-300 rounded p-2" />
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700">Número de tarjeta:</label>
-                <input type="text" v-model="formPago.numeroTarjeta" required
-                  class="w-full border border-gray-300 rounded p-2" />
-              </div>
-              <div class="flex gap-4">
-                <div class="mb-4">
-                  <label class="block text-gray-700">Fecha de expiración:</label>
-                  <input type="text" v-model="formPago.fechaExpiracion" placeholder="MM/YY" required
-                    class="w-full border border-gray-300 rounded p-2" />
-                </div>
-                <div class="mb-4">
-                  <label class="block text-gray-700">CVV:</label>
-                  <input type="text" v-model="formPago.cvv" required
-                    class="w-full border border-gray-300 rounded p-2" />
-                </div>
-              </div>
-              <div class="mt-4">
-                <button type="submit" class="bg-green-500 text-white rounded p-2 mr-2">Confirmar pago</button>
-                <button @click="cerrarModalPago" class="bg-gray-500 text-white rounded p-2">Cancelar</button>
-              </div>
-            </form>
           </div>
         </div>
       </div>
@@ -315,7 +274,7 @@ export default {
           Swal.fire("Atención", "Ya estás unido a este partido.", "info");
           return;
         }
-        
+
         // Guardar notificación en Firestore
         await guardarNotificacion(usuarioId, nombre, nombreUsuario, leido);
 
@@ -330,7 +289,7 @@ export default {
           lugaresDisponibles: partidoData.lugaresDisponibles - 1
         });
 
-        Swal.fire("Éxito", "Te has unido al partido.", "success");
+        Swal.fire("Éxito", "Te has unido al partido. Recorda pagar la inscripcion el dia del encuentro", "success");
 
       } catch (error) {
         console.error("Error al unirse al partido:", error);
@@ -351,25 +310,6 @@ export default {
         console.error("Error al guardar la notificación:", error);
       }
     };
-
-    const modalPagoVisible = ref(false); // Controla la visibilidad del modal de pago
-    const formPago = ref({ nombreTitular: '', numeroTarjeta: '', fechaExpiracion: '', cvv: '' });
-
-    const abrirModalPago = () => {
-      modalVisible.value = false; // Cierra el modal de confirmación
-      modalPagoVisible.value = true; // Abre el modal de pago
-    };
-
-    const cerrarModalPago = () => {
-      modalPagoVisible.value = false;
-    };
-
-    const procesarPago = () => {
-      // Simulación del proceso de pago
-      Swal.fire('Pago exitoso', `El pago para el partido "${partidoUnido.value.nombre}" se ha realizado.`, 'success');
-      cerrarModalPago();
-    };
-
     // Cerrar el modal
     const cerrarModal = () => {
       modalVisible.value = false;
@@ -390,11 +330,6 @@ export default {
       abreviarDireccion,
       modalVisible,
       partidoUnido,
-      modalPagoVisible,
-      formPago,
-      abrirModalPago,
-      cerrarModalPago,
-      procesarPago,
       cerrarModal,
       cargando
     };
@@ -407,7 +342,7 @@ export default {
   max-width: 950px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 15px;
 }
 

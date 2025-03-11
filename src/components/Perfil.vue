@@ -30,9 +30,9 @@
         </div>
 
         <button @click="toggleEditar"
-          class="border border-cyan-400 text-white bg-cyan-500 rounded p-3 hover:bg-transparent hover:text-black transition px-4 py-2 sm:px-4 sm:py-2 sm:text-base mt-2">
+          class="border border-cyan-400 text-white bg-cyan-500 rounded p-3 hover:bg-transparent hover:text-black transition px-4 py-2 sm:px-4 sm:py-2 sm:text-base mt-5">
           <i class="fa fa-edit mr-2"></i>
-          {{ mostrarFormulario ? 'Cancelar Edición' : 'Editar Perfil' }}
+          {{ mostrarFormulario ? 'Cancelar edición' : 'Editar perfil' }}
         </button>
 
         <div v-if="mostrarFormulario" class="mt-6 bg-gray-50 p-6 rounded-lg shadow-md">
@@ -414,7 +414,7 @@ export default {
   max-width: 800px;
   background-color: #f7fafc;
   box-shadow: 0px 4px 10px rgba(202, 240, 251, 0.3);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.5rem;
   border-radius: 14px;
 }

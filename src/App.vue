@@ -66,80 +66,45 @@
       </div>
     </nav>
 
-    <!-- Menú hamburguesa (tablet y móvil) -->
+    <!-- Barra superior (tablet y móvil) -->
     <div class="lg:hidden relative">
       <nav class="bg-zinc-100 p-4 shadow">
-        <div class="container mx-auto flex items-center justify-between relative">
-          <!-- Menú hamburguesa (Alineado a la izquierda) -->
-          <button @click="menuAbierto = !menuAbierto"
-            class="text-black focus:outline-none border-2 border-cyan-400 rounded-full w-8 h-8 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
-
+        <div class="container flex justify-between items-center relative">
           <!-- Logo centrado -->
-          <router-link to="/" class="flex-1 text-center">
-            <img src="/img/logo.png" alt="FABO Logo" class="w-32 h-auto mx-auto" />
+          <router-link to="/" class="flex-1 text-start">
+            <img src="/img/logo.png" alt="FABO Logo" class="w-32 h-auto" />
           </router-link>
 
-          <!-- Notificaciones en la esquina superior derecha -->
-          <div v-if="isLoggedIn" class="absolute top-0 right-4">
-            <button @click="toggleNotificaciones"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition-transform transform hover:scale-110">
-              <i class="fa-solid fa-bell fa-lg"></i>
-            </button>
+          <!-- Contenedor de iconos (campanita y cerrar sesión) -->
+          <div v-if="isLoggedIn" class="flex items-center gap-2 absolute top-0 right-0">
+            <!-- Notificaciones -->
+            <div class="relative">
+              <button @click="toggleNotificaciones"
+                class="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-400 text-white hover:bg-blue-700 transition-transform transform hover:scale-110">
+                <i class="fa-solid fa-bell fa-lg"></i>
+              </button>
 
-            <!-- Modal de Notificaciones con animación -->
-            <transition name="fade">
-              <div v-if="mostrarNotificaciones"
-                class="absolute right-0 mt-2 w-80 bg-white border rounded-lg shadow-lg z-50">
-                <Notificaciones @cerrar="mostrarNotificaciones = false" />
-              </div>
-            </transition>
+              <!-- Modal de Notificaciones con animación -->
+              <transition name="fade">
+                <div v-if="mostrarNotificaciones"
+                  class="absolute top-full right-0 mt-2 w-72 bg-white border rounded-lg shadow-lg z-50">
+                  <Notificaciones @cerrar="mostrarNotificaciones = false" />
+                </div>
+              </transition>
+            </div>
+
+            <!-- Cerrar sesión -->
+            <span @click="logout"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-900 transition-transform transform hover:scale-110 cursor-pointer">
+              <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+            </span>
           </div>
         </div>
       </nav>
-
-      <!-- Menú desplegable (hamburguesa) -->
-      <div v-if="menuAbierto" class="mt-4">
-        <ul class="flex flex-col items-start space-y-2 pl-4">
-          <li v-if="!isLoggedIn">
-            <router-link to="/bienvenidos" class="text-black hover:text-cyan-400 font-medium">Bienvenidos</router-link>
-          </li>
-          <li v-if="!isLoggedIn">
-            <router-link to="/login" class="text-black hover:text-cyan-400 font-medium">Iniciar sesión</router-link>
-          </li>
-          <li v-if="!isLoggedIn">
-            <router-link to="/registro" class="text-black hover:text-cyan-400 font-medium">Registro</router-link>
-          </li>
-
-          <li v-if="isLoggedIn">
-            <router-link to="/" class="text-black hover:text-cyan-400 font-medium">Comunidad</router-link>
-          </li>
-          <li v-if="isLoggedIn">
-            <router-link to="/crear-partido" class="text-black hover:text-cyan-400 font-medium">Crear
-              partido</router-link>
-          </li>
-          <li v-if="isLoggedIn">
-            <router-link to="/partidos" class="text-black hover:text-cyan-400 font-medium">Partidos</router-link>
-          </li>
-          <li v-if="isLoggedIn">
-            <router-link to="/chat" class="text-black hover:text-cyan-400 font-medium">Chat público</router-link>
-          </li>
-          <li v-if="isLoggedIn">
-            <router-link to="/perfil" class="text-black hover:text-cyan-400 font-medium">Perfil</router-link>
-          </li>
-          <li v-if="isLoggedIn" @click="logout" class="text-black hover:text-cyan-400 font-medium cursor-pointer">Salir
-          </li>
-        </ul>
-      </div>
     </div>
 
     <!-- Barra de navegación inferior para móviles y tabletas -->
-    <div v-if="isLoggedIn && mostrarBarraInferior"
-      class="lg:hidden fixed bottom-0 w-full bg-cyan-500 shadow-lg z-50 h-16">
+    <div v-if="isLoggedIn && mostrarBarraInferior" class="lg:hidden fixed bottom-0 w-full bg-cyan-500 shadow-lg z-50">
       <div class="grid grid-cols-5 items-center text-center p-2">
 
         <!-- Inicio -->
@@ -175,14 +140,39 @@
     </div>
 
     <!-- Contenido -->
-    <main class="container mx-auto mt-4 mb-16 pb-20">
+    <main class="container mx-auto mt-4 mb-8 pb-20">
       <router-view />
     </main>
 
-    <!-- Footer, oculto solo en chat -->
-    <footer v-if="!$route.path.includes('chat')" class="bg-cyan-500 text-white py-4 mt-8">
-      <div class="container mx-auto text-center">
-        <p>&copy; 2024 FABO - Fútbol, Amistad, Básquet, Otros</p>
+    <!-- Footer -->
+    <footer class="bg-cyan-500 text-white py-6 hidden sm:block">
+      <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-6">
+        <!-- Logo -->
+        <div>
+          <img src="/img/logo2.png" alt="FABO Logo" class="h-12">
+        </div>
+
+        <!-- Enlaces rápidos -->
+        <div class="flex space-x-6 mt-0">
+          <router-link v-if="!isLoggedIn" to="/bienvenidos" class="hover:underline">Bienvenidos</router-link>
+          <router-link v-if="!isLoggedIn" to="/login" class="hover:underline">Login</router-link>
+          <router-link v-if="!isLoggedIn" to="/registro" class="hover:underline">Registro</router-link>
+          <router-link v-if="isLoggedIn" to="/" class="hover:underline">Publicaciones</router-link>
+          <router-link v-if="isLoggedIn" to="/chat" class="hover:underline">chat</router-link>
+          <router-link v-if="isLoggedIn" to="/partidos" class="hover:underline">partidos</router-link>
+        </div>
+
+        <!-- Redes sociales -->
+        <div class="flex space-x-4 mt-0">
+          <a href="https://www.facebook.com/" target="_blank" class="hover:text-gray-200"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://x.com/home" target="_blank" class="hover:text-gray-200"><i class="fab fa-twitter"></i></a>
+          <a href="https://www.instagram.com" target="_blank" class="hover:text-gray-200"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="text-center text-sm mt-6 border-t border-white/20 pt-4">
+        &copy; 2024 FABO - Fútbol, Amistad, Básquet, Otros. Todos los derechos reservados.
       </div>
     </footer>
   </div>

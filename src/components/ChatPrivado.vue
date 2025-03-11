@@ -15,7 +15,7 @@
 
     <!-- Mensajes -->
     <div v-if="conversacionActual.length" class="overflow-y-auto bg-white p-4 rounded-lg max-h-[500px]">
-      <div v-for="mensaje in conversacionActual" :key="mensaje.id" :class="['mb-6 p-4 rounded-lg max-w-[60%] shadow-md flex items-start',
+      <div v-for="mensaje in conversacionActual" :key="mensaje.id" :class="['mb-6 p-4 rounded-lg md:max-w-[60%] max-w-[80%] shadow-md flex items-start',
         mensaje.usuario === usuarioActualId ? 'bg-red-50 ml-auto text-right flex-row-reverse'
           : 'bg-gray-50 mr-auto text-left']">
 
