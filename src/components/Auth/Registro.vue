@@ -42,7 +42,7 @@
           </button>
         </form>
         <p class="mt-4 text-center">
-          ¿Ya tenes una cuenta?
+          ¿Ya tenés una cuenta?
           <router-link to="/login" class="text-blue-500 font-semibold">Inicia sesión aca</router-link>
         </p>
       </div>

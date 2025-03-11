@@ -40,7 +40,7 @@
       </form>
 
       <p class="mt-4 text-center">
-        ¿No tenes una cuenta?
+        ¿No tenés una cuenta?
         <router-link to="/registro" class="text-blue-500 font-semibold">Regístrate aca</router-link>
       </p>
       <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
